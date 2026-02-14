@@ -172,7 +172,7 @@ select option{background:#fff}
   <div style="display:flex;gap:0;margin:0 20px 20px;background:#fff;border-radius:14px;padding:4px;box-shadow:0 2px 12px rgba(0,0,0,.04)">
     <button id="home-tab-saju" onclick="switchHomeTab('saju')" style="flex:1;padding:12px;font-size:14px;font-weight:700;border:none;border-radius:11px;cursor:pointer;transition:all .25s;background:#88619A;color:#fff">🔮 내 사주</button>
     <button id="home-tab-gunghap" onclick="switchHomeTab('gunghap')" style="flex:1;padding:12px;font-size:14px;font-weight:700;border:none;border-radius:11px;cursor:pointer;transition:all .25s;background:transparent;color:#999">💕 궁합</button>
-    <button id="home-tab-chat" onclick="goPage('chat')" style="flex:1;padding:12px;font-size:14px;font-weight:700;border:none;border-radius:11px;cursor:pointer;transition:all .25s;background:transparent;color:#999">상담사 달토🐰</button>
+    <button id="home-tab-chat" onclick="switchHomeTab('chat')" style="flex:1;padding:12px;font-size:15px;font-weight:700;border:none;border-radius:11px;cursor:pointer;transition:all .25s;background:transparent;color:#999">상담사 달토🐰</button>
   </div>
   <!-- 사주 탭 컨텐츠 -->
   <div id="home-content-saju" style="padding:0 20px 40px">
@@ -230,6 +230,37 @@ select option{background:#fff}
           <div style="display:flex;gap:6px"><span style="padding:4px 10px;font-size:11px;font-weight:600;background:#fde8ee;color:#c62828;border-radius:8px">약 2분</span><span style="padding:4px 10px;font-size:11px;font-weight:600;background:#FEF3CD;color:#8B6914;border-radius:8px">1,500원</span></div>
           <button onclick="goPage('gh-input')" style="padding:10px 20px;font-size:14px;font-weight:700;color:#fff;background:linear-gradient(135deg,#FF6B8A,#e8619a);border:none;border-radius:12px;box-shadow:0 4px 12px rgba(255,107,138,.3)">궁합 보기 →</button>
         </div>
+      </div>
+    </div>
+  </div>
+  <!-- 달토 상담 탭 컨텐츠 -->
+  <div id="home-content-chat" style="padding:0 20px 40px;display:none">
+    <div style="text-align:center;margin-bottom:24px">
+      <h2 style="font-size:20px;font-weight:800;color:#333">달토 상담 🐰</h2>
+      <p style="font-size:14px;color:#999;margin-top:4px">사주 기반 AI 상담사에게 물어보세요</p>
+    </div>
+    <div style="background:#fff;border-radius:20px;padding:28px 24px;box-shadow:0 4px 20px rgba(136,97,154,.08);margin-bottom:16px;border:2px solid transparent">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px">
+        <div style="width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#f9f6fb,#efe8f4);display:flex;align-items:center;justify-content:center;font-size:28px">🐰</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;color:#333">AI 사주 상담사 달토</div>
+          <div style="font-size:13px;color:#999;margin-top:2px">무엇이든 물어보세요</div>
+        </div>
+      </div>
+      <div id="chat-card-body-need" style="display:none">
+        <p style="font-size:13px;color:#e53935;line-height:1.6;margin-bottom:14px">⚠️ 먼저 <strong>"내 사주"</strong> 분석을 완료해주세요!<br>사주 정보가 있어야 정확한 상담이 가능해요</p>
+        <button onclick="switchHomeTab('saju')" style="width:100%;padding:14px;font-size:14px;font-weight:700;color:#fff;background:#88619A;border:none;border-radius:12px">🔮 내 사주 먼저 분석하기</button>
+      </div>
+      <div id="chat-card-body-ok" style="display:none">
+        <p style="font-size:13px;color:#666;line-height:1.6;margin-bottom:6px">내 분석 완료! ✅</p>
+        <p id="chat-card-info" style="font-size:14px;font-weight:700;color:#88619A;margin-bottom:16px"></p>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">
+          <span style="padding:4px 10px;font-size:11px;font-weight:600;background:#f9f6fb;color:#88619A;border-radius:8px">오늘의 운세</span>
+          <span style="padding:4px 10px;font-size:11px;font-weight:600;background:#fde8ee;color:#c62828;border-radius:8px">연애운</span>
+          <span style="padding:4px 10px;font-size:11px;font-weight:600;background:#FEF3CD;color:#8B6914;border-radius:8px">재물운</span>
+          <span style="padding:4px 10px;font-size:11px;font-weight:600;background:#e8f5e9;color:#2e7d32;border-radius:8px">직장운</span>
+        </div>
+        <button onclick="goPage('chat')" style="width:100%;padding:14px;font-size:14px;font-weight:700;color:#fff;background:linear-gradient(135deg,#88619A,#6A4C7A);border:none;border-radius:12px;box-shadow:0 4px 12px rgba(136,97,154,.3)">🐰 달토와 상담 시작하기</button>
       </div>
     </div>
   </div>
@@ -960,21 +991,35 @@ function goPage(id){
 // ── 메인홈 탭 전환 ──
 function switchHomeTab(tab){
   var sTab=document.getElementById('home-tab-saju'), gTab=document.getElementById('home-tab-gunghap'), cTab=document.getElementById('home-tab-chat');
-  var sCont=document.getElementById('home-content-saju'), gCont=document.getElementById('home-content-gunghap');
+  var sCont=document.getElementById('home-content-saju'), gCont=document.getElementById('home-content-gunghap'), cCont=document.getElementById('home-content-chat');
+  // 모든 탭 비활성화
+  sTab.style.background='transparent';sTab.style.color='#999';
+  gTab.style.background='transparent';gTab.style.color='#999';
   cTab.style.background='transparent';cTab.style.color='#999';
+  sCont.style.display='none';gCont.style.display='none';cCont.style.display='none';
   if(tab==='saju'){
     sTab.style.background='#88619A';sTab.style.color='#fff';
-    gTab.style.background='transparent';gTab.style.color='#999';
-    sCont.style.display='block';gCont.style.display='none';
-  } else {
+    sCont.style.display='block';
+  } else if(tab==='gunghap'){
     gTab.style.background='#88619A';gTab.style.color='#fff';
-    sTab.style.background='transparent';sTab.style.color='#999';
-    gCont.style.display='block';sCont.style.display='none';
+    gCont.style.display='block';
     // 궁합 가능 여부 체크
     var needEl=document.getElementById('gh-card-body-need');
     var okEl=document.getElementById('gh-card-body-ok');
     if(window._lastSaju){needEl.style.display='none';okEl.style.display='block';}
     else{needEl.style.display='block';okEl.style.display='none';}
+  } else if(tab==='chat'){
+    cTab.style.background='#88619A';cTab.style.color='#fff';
+    cCont.style.display='block';
+    // 채팅 가능 여부 체크
+    var chatNeed=document.getElementById('chat-card-body-need');
+    var chatOk=document.getElementById('chat-card-body-ok');
+    if(window._lastSaju){
+      chatNeed.style.display='none';chatOk.style.display='block';
+      document.getElementById('chat-card-info').textContent=window._lastSaju.P[2].s+window._lastSaju.P[2].b+'일주 × '+window._lastMBTI;
+    } else {
+      chatNeed.style.display='block';chatOk.style.display='none';
+    }
   }
 }
 
