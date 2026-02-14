@@ -35,6 +35,9 @@ export async function POST(request) {
       )
     }
 
+    // JSON 응답 강제 지시 추가
+    systemPrompt = systemPrompt + '\n\n[CRITICAL INSTRUCTION] You MUST respond with ONLY a valid JSON object. Do NOT include any text before or after the JSON. No greetings, no explanations, no markdown code fences. Start your response with { and end with }. This is absolutely mandatory.';
+
     // 1차 시도: Primary 모델
     console.log(`[analyze] 1차 시도: ${PRIMARY_MODEL}`)
     let response = await callAnthropic(PRIMARY_MODEL, systemPrompt, userPrompt)

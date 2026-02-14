@@ -1751,10 +1751,34 @@ async function startGunghap(){
 
   try{
     var aiText=await streamSonnet(apiKey, GUNGHAP_SYSTEM, userPrompt, '💕 궁합 분석', 'gh-load-msg', 'gh-load-bar', 'gh-load-pct', '/api/gunghap-analyze');
-    try{aiResult=JSON.parse(aiText);}catch(e){
-      var fb=aiText.indexOf('{'), lb=aiText.lastIndexOf('}');
-      if(fb>=0&&lb>fb) try{aiResult=JSON.parse(aiText.substring(fb,lb+1));}catch(e2){}
-      if(!aiResult) apiError='JSON_PARSE';
+    try {
+      aiResult = JSON.parse(aiText);
+    } catch(e) {
+      console.warn('[MBTS] 궁합 1차 JSON 파싱 실패, 추출 시도...');
+      // 2차: { ~ } 추출
+      var fb = aiText.indexOf('{'), lb = aiText.lastIndexOf('}');
+      if (fb >= 0 && lb > fb) {
+        try { aiResult = JSON.parse(aiText.substring(fb, lb + 1)); } catch(e2) {}
+      }
+      // 3차: 줄 단위 추출
+      if (!aiResult) {
+        var lines = aiText.split('\n');
+        var si = -1, ei = -1;
+        for (var li = 0; li < lines.length; li++) {
+          if (si < 0 && lines[li].trim().charAt(0) === '{') si = li;
+          if (lines[li].trim().charAt(0) === '}' || lines[li].trim().slice(-1) === '}') ei = li;
+        }
+        if (si >= 0 && ei >= si) {
+          try { aiResult = JSON.parse(lines.slice(si, ei + 1).join('\n')); } catch(e3) {}
+        }
+      }
+      // 4차: 제어문자 제거 후 재시도
+      if (!aiResult) {
+        var sanitized = aiText.substring(fb >= 0 ? fb : 0, (lb > 0 ? lb + 1 : aiText.length));
+        sanitized = sanitized.replace(/[\x00-\x1F\x7F]/g, function(c) { return c === '\n' || c === '\r' || c === '\t' ? c : ''; });
+        try { aiResult = JSON.parse(sanitized); } catch(e4) {}
+      }
+      if (!aiResult) apiError = 'JSON_PARSE';
     }
   }catch(e){
     console.error('[MBTS] 궁합 에러:', e);
@@ -1900,7 +1924,30 @@ async function streamSonnet(apiKey, systemPrompt, userMsg, label, msgElId, barEl
     }
   }
   console.log('[MBTS] '+label+' 완료: '+fullText.length+'자');
-  return fullText.replace(/```json|```/g,"").trim();
+  var cleaned = fullText.replace(/```json|```/g,"").trim();
+  // 1차: 그대로 파싱 시도
+  try { JSON.parse(cleaned); return cleaned; } catch(e1) {}
+  // 2차: 첫 번째 { 부터 마지막 } 까지 추출
+  var firstBrace = cleaned.indexOf('{');
+  var lastBrace = cleaned.lastIndexOf('}');
+  if (firstBrace >= 0 && lastBrace > firstBrace) {
+    var extracted = cleaned.substring(firstBrace, lastBrace + 1);
+    try { JSON.parse(extracted); return extracted; } catch(e2) {}
+  }
+  // 3차: 줄바꿈 기준으로 { 로 시작하는 줄부터 } 로 끝나는 줄까지
+  var lines = cleaned.split('\n');
+  var startIdx = -1, endIdx = -1;
+  for (var i = 0; i < lines.length; i++) {
+    if (startIdx < 0 && lines[i].trim().charAt(0) === '{') startIdx = i;
+    if (lines[i].trim().charAt(0) === '}' || lines[i].trim().slice(-1) === '}') endIdx = i;
+  }
+  if (startIdx >= 0 && endIdx >= startIdx) {
+    var jsonBlock = lines.slice(startIdx, endIdx + 1).join('\n');
+    try { JSON.parse(jsonBlock); return jsonBlock; } catch(e3) {}
+  }
+  // 4차: 모든 방법 실패시 원본 반환
+  console.warn('[MBTS] JSON 추출 실패, 원본 반환:', cleaned.substring(0, 100));
+  return cleaned;
 }
 
 async function startAnalysis(){
@@ -2163,11 +2210,34 @@ async function startAnalysis(){
 
     var aiText = await streamSonnet(apiKey, PREMIUM_SYSTEM, usr, '✨ AI 분석 중');
 
-    try{result=JSON.parse(aiText);}catch(e){
-      var fb=aiText.indexOf('{');
-      var lb=aiText.lastIndexOf('}');
-      if(fb>=0 && lb>fb) try{result=JSON.parse(aiText.substring(fb,lb+1));}catch(e2){}
-      if(!result){apiError='JSON_PARSE';result=mkFB(saju,mt,gg);}
+    try {
+      result = JSON.parse(aiText);
+    } catch(e) {
+      console.warn('[MBTS] 1차 JSON 파싱 실패, 추출 시도...');
+      // 2차: { ~ } 추출
+      var fb = aiText.indexOf('{'), lb = aiText.lastIndexOf('}');
+      if (fb >= 0 && lb > fb) {
+        try { result = JSON.parse(aiText.substring(fb, lb + 1)); } catch(e2) {}
+      }
+      // 3차: 줄 단위 추출
+      if (!result) {
+        var lines = aiText.split('\n');
+        var si = -1, ei = -1;
+        for (var li = 0; li < lines.length; li++) {
+          if (si < 0 && lines[li].trim().charAt(0) === '{') si = li;
+          if (lines[li].trim().charAt(0) === '}' || lines[li].trim().slice(-1) === '}') ei = li;
+        }
+        if (si >= 0 && ei >= si) {
+          try { result = JSON.parse(lines.slice(si, ei + 1).join('\n')); } catch(e3) {}
+        }
+      }
+      // 4차: 제어문자 제거 후 재시도
+      if (!result) {
+        var sanitized = aiText.substring(fb >= 0 ? fb : 0, (lb > 0 ? lb + 1 : aiText.length));
+        sanitized = sanitized.replace(/[\x00-\x1F\x7F]/g, function(c) { return c === '\n' || c === '\r' || c === '\t' ? c : ''; });
+        try { result = JSON.parse(sanitized); } catch(e4) {}
+      }
+      if (!result) { apiError = 'JSON_PARSE'; result = mkFB(saju, mt, gg); }
     }
     if(result) console.log('[MBTS] 분석 완료. 항목 수:', (result.categories||[]).reduce(function(s,c){return s+(c.items||[]).length;},0));
     // ★ v29.1: 후처리 검증 (대운 나이 등 팩트 교정)
