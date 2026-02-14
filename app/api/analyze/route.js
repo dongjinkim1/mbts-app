@@ -36,16 +36,16 @@ export async function POST(request) {
     }
 
     // JSON 응답 강제 지시 추가
-    systemPrompt = systemPrompt + '\n\n[CRITICAL INSTRUCTION] You MUST respond with ONLY a valid JSON object. Do NOT include any text before or after the JSON. No greetings, no explanations, no markdown code fences. Start your response with { and end with }. This is absolutely mandatory.';
+    const finalSystemPrompt = systemPrompt + '\n\n[CRITICAL INSTRUCTION] You MUST respond with ONLY a valid JSON object. Do NOT include any text before or after the JSON. No greetings, no explanations, no markdown code fences. Start your response with { and end with }. This is absolutely mandatory.';
 
     // 1차 시도: Primary 모델
     console.log(`[analyze] 1차 시도: ${PRIMARY_MODEL}`)
-    let response = await callAnthropic(PRIMARY_MODEL, systemPrompt, userPrompt)
+    let response = await callAnthropic(PRIMARY_MODEL, finalSystemPrompt, userPrompt)
 
     // 400 또는 404일 때만 폴백
     if (response.status === 400 || response.status === 404) {
       console.log(`[analyze] 1차 실패 (${response.status}), 폴백: ${FALLBACK_MODEL}`)
-      response = await callAnthropic(FALLBACK_MODEL, systemPrompt, userPrompt)
+      response = await callAnthropic(FALLBACK_MODEL, finalSystemPrompt, userPrompt)
     }
 
     // 폴백 후에도 실패하면 에러 반환
