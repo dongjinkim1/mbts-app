@@ -97,6 +97,39 @@ select option{background:#fff}
 /* Footer */
 .res-footer{text-align:center;padding:0 20px 60px}
 @media(max-width:600px){.manse-card{margin:0 10px 12px;padding:16px 10px}.pil-stem,.pil-branch{font-size:20px}.sec-area{padding:16px 14px 0}.sec-body{padding-left:14px}.sec-body p{font-size:13.5px}}
+/* ===== Chat (달토 상담) ===== */
+.chat-wrap{display:flex;flex-direction:column;height:100vh;max-width:640px;margin:0 auto;width:100%}
+.chat-header{background:#fff;padding:16px 20px 12px;border-bottom:1px solid #f0f0f0;flex-shrink:0}
+.chat-header-top{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+.chat-header-back{background:none;border:none;font-size:14px;color:#88619A;font-weight:600;padding:4px 0;cursor:pointer}
+.chat-header-title{font-size:17px;font-weight:800;color:#333}
+.chat-header-sub{font-size:11px;color:#999;padding-left:2px}
+.chat-messages{flex:1;overflow-y:auto;padding:16px 16px 8px;background:#F8F5FF;-webkit-overflow-scrolling:touch}
+.chat-bubble-row{display:flex;margin-bottom:14px;align-items:flex-end}
+.chat-bubble-row.chat-user{justify-content:flex-end}
+.chat-bubble-row.chat-ai{justify-content:flex-start;align-items:flex-start}
+.chat-avatar{width:32px;height:32px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;margin-right:8px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.chat-bubble{max-width:75%;padding:12px 16px;font-size:14px;line-height:1.7;word-break:keep-all}
+.chat-bubble.chat-bubble-user{background:#88619A;color:#fff;border-radius:18px 18px 4px 18px}
+.chat-bubble.chat-bubble-ai{background:#fff;color:#333;border-radius:18px 18px 18px 4px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.chat-time{font-size:11px;color:#bbb;margin-top:4px;padding:0 4px}
+.chat-time-user{text-align:right}
+.chat-time-ai{text-align:left;padding-left:40px}
+.chat-quick-wrap{padding:8px 16px 4px;background:#F8F5FF;flex-shrink:0}
+.chat-quick-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.chat-quick-scroll::-webkit-scrollbar{display:none}
+.chat-quick-btn{flex-shrink:0;padding:8px 16px;font-size:13px;font-weight:600;color:#88619A;background:#fff;border:1.5px solid #d8cfe0;border-radius:100px;cursor:pointer;white-space:nowrap;transition:all .2s}
+.chat-quick-btn:active{background:#88619A;color:#fff;border-color:#88619A}
+.chat-input-area{display:flex;align-items:flex-end;gap:8px;padding:10px 16px;background:#fff;border-top:1px solid #f0f0f0;flex-shrink:0;padding-bottom:calc(10px + env(safe-area-inset-bottom,0))}
+.chat-input{flex:1;padding:10px 14px;font-size:14px;border:1.5px solid #e0d8e6;border-radius:20px;outline:none;resize:none;max-height:100px;min-height:40px;font-family:'Noto Sans KR',sans-serif;line-height:1.5;overflow-y:auto}
+.chat-input:focus{border-color:#88619A;box-shadow:0 0 0 3px rgba(136,97,154,.1)}
+.chat-send-btn{width:40px;height:40px;border-radius:50%;border:none;background:#ccc;color:#fff;font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.chat-send-btn.chat-send-active{background:#88619A}
+@keyframes chatTyping{0%,60%,100%{opacity:.3}30%{opacity:1}}
+.chat-typing-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#88619A;margin:0 2px;animation:chatTyping 1.4s infinite}
+.chat-typing-dot:nth-child(2){animation-delay:.2s}
+.chat-typing-dot:nth-child(3){animation-delay:.4s}
+.chat-start-card{background:#fff;border-radius:20px;padding:28px 24px;box-shadow:0 4px 20px rgba(136,97,154,.08);margin:20px;text-align:center}
 </style>
 </head>
 <body>
@@ -137,8 +170,9 @@ select option{background:#fff}
   </div>
   <!-- 상단 탭바: 사주/궁합 -->
   <div style="display:flex;gap:0;margin:0 20px 20px;background:#fff;border-radius:14px;padding:4px;box-shadow:0 2px 12px rgba(0,0,0,.04)">
-    <button id="home-tab-saju" onclick="switchHomeTab('saju')" style="flex:1;padding:12px;font-size:15px;font-weight:700;border:none;border-radius:11px;cursor:pointer;transition:all .25s;background:#88619A;color:#fff">🔮 내 사주</button>
-    <button id="home-tab-gunghap" onclick="switchHomeTab('gunghap')" style="flex:1;padding:12px;font-size:15px;font-weight:700;border:none;border-radius:11px;cursor:pointer;transition:all .25s;background:transparent;color:#999">💕 궁합</button>
+    <button id="home-tab-saju" onclick="switchHomeTab('saju')" style="flex:1;padding:12px;font-size:14px;font-weight:700;border:none;border-radius:11px;cursor:pointer;transition:all .25s;background:#88619A;color:#fff">🔮 내 사주</button>
+    <button id="home-tab-gunghap" onclick="switchHomeTab('gunghap')" style="flex:1;padding:12px;font-size:14px;font-weight:700;border:none;border-radius:11px;cursor:pointer;transition:all .25s;background:transparent;color:#999">💕 궁합</button>
+    <button id="home-tab-chat" onclick="goPage('chat')" style="flex:1;padding:12px;font-size:14px;font-weight:700;border:none;border-radius:11px;cursor:pointer;transition:all .25s;background:transparent;color:#999">상담사 달토🐰</button>
   </div>
   <!-- 사주 탭 컨텐츠 -->
   <div id="home-content-saju" style="padding:0 20px 40px">
@@ -297,6 +331,57 @@ select option{background:#fff}
 
 <!-- ===== 궁합 결과 페이지 ===== -->
 <div id="pg-gh-res" class="page" style="display:none;flex-direction:column"></div>
+
+<!-- ===== 채팅 페이지 (달토 상담) ===== -->
+<div id="pg-chat" class="page" style="display:none;flex-direction:column;padding:0;min-height:100vh">
+  <div id="chat-start-screen" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;background:linear-gradient(180deg,#f9f6fb 0%,#F8F5FF 100%)">
+    <div id="chat-start-has-saju" style="display:none;width:100%;max-width:500px">
+      <div class="chat-start-card">
+        <div style="font-size:48px;margin-bottom:12px">🐰</div>
+        <h2 style="font-size:20px;font-weight:800;color:#333;margin-bottom:6px">달토 상담사</h2>
+        <p style="font-size:13px;color:#999;margin-bottom:20px">사주 기반 AI 상담 · 무엇이든 물어보세요</p>
+        <div style="background:#f9f6fb;border-radius:14px;padding:16px;margin-bottom:20px">
+          <div style="font-size:13px;color:#88619A;font-weight:700;margin-bottom:4px">현재 분석 정보</div>
+          <div id="chat-start-info" style="font-size:15px;font-weight:800;color:#333"></div>
+        </div>
+        <button onclick="enterChatRoom()" style="width:100%;padding:16px;font-size:15px;font-weight:700;color:#fff;background:linear-gradient(135deg,#88619A,#6A4C7A);border:none;border-radius:14px;cursor:pointer;box-shadow:0 4px 15px rgba(136,97,154,.3)">이 사주로 상담 시작하기</button>
+      </div>
+    </div>
+    <div id="chat-start-no-saju" style="display:none;width:100%;max-width:500px">
+      <div class="chat-start-card">
+        <div style="font-size:48px;margin-bottom:12px">🐰</div>
+        <h2 style="font-size:20px;font-weight:800;color:#333;margin-bottom:6px">달토 상담사</h2>
+        <p style="font-size:14px;color:#666;margin-bottom:8px;line-height:1.6">먼저 사주 분석을 해주세요!</p>
+        <p style="font-size:12px;color:#999;margin-bottom:24px">사주 정보가 있어야 정확한 상담이 가능해요</p>
+        <button onclick="goPage('birth')" style="width:100%;padding:16px;font-size:15px;font-weight:700;color:#fff;background:#88619A;border:none;border-radius:14px;cursor:pointer">🔮 사주 분석하러 가기</button>
+      </div>
+    </div>
+  </div>
+  <div id="chat-room" style="display:none;flex:1;flex-direction:column;height:100vh">
+    <div class="chat-header">
+      <div class="chat-header-top">
+        <button class="chat-header-back" onclick="exitChatRoom()">← 뒤로</button>
+        <span class="chat-header-title">🐰 달토 상담사</span>
+      </div>
+      <div class="chat-header-sub">사주 기반 AI 상담 · 무엇이든 물어보세요</div>
+    </div>
+    <div id="chat-messages" class="chat-messages"></div>
+    <div id="chat-quick-area" class="chat-quick-wrap">
+      <div class="chat-quick-scroll">
+        <button class="chat-quick-btn" onclick="sendChatMessage('🔮 오늘의 운세')">🔮 오늘의 운세</button>
+        <button class="chat-quick-btn" onclick="sendChatMessage('💕 연애운 분석')">💕 연애운 분석</button>
+        <button class="chat-quick-btn" onclick="sendChatMessage('💼 직장/취업운')">💼 직장/취업운</button>
+        <button class="chat-quick-btn" onclick="sendChatMessage('💰 재물운 분석')">💰 재물운 분석</button>
+        <button class="chat-quick-btn" onclick="sendChatMessage('🏥 건강운 체크')">🏥 건강운 체크</button>
+        <button class="chat-quick-btn" onclick="sendChatMessage('🌙 이번 달 운세')">🌙 이번 달 운세</button>
+      </div>
+    </div>
+    <div class="chat-input-area">
+      <textarea id="chat-input" class="chat-input" placeholder="달토에게 물어보세요..." rows="1" oninput="autoResizeChatInput();updateSendBtn()" onkeydown="chatInputKeydown(event)"></textarea>
+      <button id="chat-send-btn" class="chat-send-btn" onclick="sendChatMessage()" disabled>➤</button>
+    </div>
+  </div>
+</div>
 
 <script>
 /* ==========================================
@@ -869,12 +954,14 @@ function goPage(id){
   if(id==='mbti')renderMBTI();if(id==='birth')checkBirthOK();
   if(id==='gh-input')initGHPage();
   if(id==='home')updateHomePage();
+  if(id==='chat')initChatPage();
 }
 
 // ── 메인홈 탭 전환 ──
 function switchHomeTab(tab){
-  var sTab=document.getElementById('home-tab-saju'), gTab=document.getElementById('home-tab-gunghap');
+  var sTab=document.getElementById('home-tab-saju'), gTab=document.getElementById('home-tab-gunghap'), cTab=document.getElementById('home-tab-chat');
   var sCont=document.getElementById('home-content-saju'), gCont=document.getElementById('home-content-gunghap');
+  cTab.style.background='transparent';cTab.style.color='#999';
   if(tab==='saju'){
     sTab.style.background='#88619A';sTab.style.color='#fff';
     gTab.style.background='transparent';gTab.style.color='#999';
@@ -1869,6 +1956,7 @@ function renderGunghapResult(ghR, aiR, sajuA, sajuB, mbtiA, mbtiB, ggA, ggB, err
   h+='<div class="btm-tab"><div class="btm-tab-inner">';
   h+='<div class="btm-tab-item" onclick="goPage(\'res\')"><div class="tab-ic">🔮</div><div class="tab-lb">내 사주</div></div>';
   h+='<div class="btm-tab-item active"><div class="tab-ic">💕</div><div class="tab-lb">궁합</div></div>';
+  h+='<div class="btm-tab-item" onclick="goPage(\'chat\')"><div class="tab-ic">🐰</div><div class="tab-lb">달토 상담</div></div>';
   h+='</div></div>';
 
   el.innerHTML=h;
@@ -4935,6 +5023,7 @@ function renderResult(result,saju,mt,gg,isAI){
   html+='<button onclick="shareResult()" style="padding:14px 40px;font-size:14px;font-weight:700;color:#333;background:#FEE500;border:none;border-radius:30px;cursor:pointer">💬 카카오톡 공유</button><br>';
   html+='<button onclick="resetAll()" style="padding:10px 28px;font-size:12px;color:#999;background:#f5f5f5;border:none;border-radius:30px;cursor:pointer;margin-top:12px">다시 분석하기</button>';
   html+='<p style="margin-top:24px;font-size:11px;color:#bbb;opacity:.8">본 풀이는 명리학과 MBTI 이론을 기반한 참고용 분석이며,<br>개인의 의사결정을 대체하지 않습니다.</p>';
+  html+='<div style="text-align:center;margin:30px 0 60px"><button onclick="startChatFromResult()" style="padding:14px 32px;background:linear-gradient(135deg,#88619A,#6A4C7A);color:#fff;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 15px rgba(136,97,154,0.3)">🐰 달토에게 더 물어보기</button><div style="font-size:11px;color:#999;margin-top:8px">AI 사주 상담사에게 궁금한 점을 물어보세요</div></div>';
   html+='</div>';
   html+='<div style="height:80px"></div>'; // 탭바 여백
   html+='</div>';
@@ -4942,6 +5031,7 @@ function renderResult(result,saju,mt,gg,isAI){
   html+='<div class="btm-tab"><div class="btm-tab-inner">';
   html+='<div class="btm-tab-item active"><div class="tab-ic">🔮</div><div class="tab-lb">내 사주</div></div>';
   html+='<div class="btm-tab-item" onclick="goPage(\'gh-input\')"><div class="tab-ic">💕</div><div class="tab-lb">궁합</div></div>';
+  html+='<div class="btm-tab-item" onclick="goPage(\'chat\')"><div class="tab-ic">🐰</div><div class="tab-lb">달토 상담</div></div>';
   html+='</div></div>';
 
   pg.innerHTML=html;
@@ -4952,6 +5042,238 @@ function renderResult(result,saju,mt,gg,isAI){
 
 function shareResult(){var t='🔮 MBTS 사주×MBTI 분석\n\n내 운명도 확인해보세요 👉';if(navigator.share)navigator.share({title:'MBTS',text:t});else{navigator.clipboard&&navigator.clipboard.writeText(t);alert('복사됨!');}}
 function resetAll(){ST={y:"",m:"",d:"",h:"",min:"",gender:"",ch:[null,null,null,null],it:[null,null,null,null],cur:0};document.getElementById('in-y').value='';document.getElementById('in-m').value='';document.getElementById('in-d').value='';document.getElementById('in-h').value='';document.getElementById('in-min').value='';pickGender('');document.getElementById('pg-res').innerHTML='';goPage('home');}
+
+// ===== 달토 채팅 시스템 =====
+var chatHistory = [];
+var chatSaju = null;
+var chatMbti = null;
+var isChatLoading = false;
+var chatRoomActive = false;
+
+function initChatPage(){
+  if(window._lastSaju){
+    chatSaju = window._lastSaju;
+    chatMbti = window._lastMBTI;
+    document.getElementById('chat-start-has-saju').style.display='block';
+    document.getElementById('chat-start-no-saju').style.display='none';
+    document.getElementById('chat-start-info').textContent=window._lastSaju.P[2].s+window._lastSaju.P[2].b+'일주 × '+window._lastMBTI;
+    if(chatRoomActive){
+      document.getElementById('chat-start-screen').style.display='none';
+      document.getElementById('chat-room').style.display='flex';
+    } else {
+      document.getElementById('chat-start-screen').style.display='flex';
+      document.getElementById('chat-room').style.display='none';
+    }
+  } else {
+    document.getElementById('chat-start-has-saju').style.display='none';
+    document.getElementById('chat-start-no-saju').style.display='block';
+    document.getElementById('chat-start-screen').style.display='flex';
+    document.getElementById('chat-room').style.display='none';
+  }
+}
+
+function enterChatRoom(){
+  chatRoomActive = true;
+  document.getElementById('chat-start-screen').style.display='none';
+  document.getElementById('chat-room').style.display='flex';
+  if(document.getElementById('chat-messages').children.length===0){
+    var ilju = chatSaju ? chatSaju.P[2].s+chatSaju.P[2].b : '';
+    var greeting = '안녕하세요! 저는 사주 상담사 달토예요 🐰✨\n'+ilju+'님의 사주를 보고 있어요. 궁금한 게 있으시면 편하게 물어보세요!\n아래 버튼을 눌러 빠르게 시작할 수도 있어요 👇';
+    appendChatBubble('ai', greeting);
+  }
+  scrollChatToBottom();
+}
+
+function exitChatRoom(){
+  chatRoomActive = false;
+  document.getElementById('chat-start-screen').style.display='flex';
+  document.getElementById('chat-room').style.display='none';
+}
+
+function startChatFromResult(){
+  if(window._lastSaju){
+    chatSaju = window._lastSaju;
+    chatMbti = window._lastMBTI;
+  }
+  goPage('chat');
+  setTimeout(function(){ enterChatRoom(); }, 50);
+}
+
+function appendChatBubble(type, text, id){
+  var area = document.getElementById('chat-messages');
+  var row = document.createElement('div');
+  row.className = 'chat-bubble-row ' + (type==='user' ? 'chat-user' : 'chat-ai');
+  var html = '';
+  if(type==='ai'){
+    html += '<div class="chat-avatar">🐰</div>';
+  }
+  var bubbleClass = type==='user' ? 'chat-bubble-user' : 'chat-bubble-ai';
+  html += '<div class="chat-bubble '+bubbleClass+'"'+(id?' id="'+id+'"':'')+'>';
+  html += text ? textToHtml(text) : '';
+  html += '</div>';
+  row.innerHTML = html;
+  // 시간 표시
+  var timeRow = document.createElement('div');
+  var now = new Date();
+  var h = now.getHours(), m = now.getMinutes();
+  var ampm = h < 12 ? '오전' : '오후';
+  var hh = h % 12; if(hh===0) hh=12;
+  timeRow.className = type==='user' ? 'chat-time chat-time-user' : 'chat-time chat-time-ai';
+  timeRow.textContent = ampm + ' ' + hh + ':' + String(m).padStart(2,'0');
+  area.appendChild(row);
+  area.appendChild(timeRow);
+  scrollChatToBottom();
+}
+
+function textToHtml(text){
+  return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+
+function updateChatBubble(id, text){
+  var el = document.getElementById(id);
+  if(el) el.innerHTML = textToHtml(text);
+}
+
+function showTypingIndicator(){
+  var area = document.getElementById('chat-messages');
+  var row = document.createElement('div');
+  row.className = 'chat-bubble-row chat-ai';
+  row.id = 'chat-typing-row';
+  row.innerHTML = '<div class="chat-avatar">🐰</div><div class="chat-bubble chat-bubble-ai"><span class="chat-typing-dot"></span><span class="chat-typing-dot"></span><span class="chat-typing-dot"></span></div>';
+  area.appendChild(row);
+  scrollChatToBottom();
+}
+
+function hideTypingIndicator(){
+  var el = document.getElementById('chat-typing-row');
+  if(el) el.remove();
+}
+
+function scrollChatToBottom(){
+  var area = document.getElementById('chat-messages');
+  if(area) setTimeout(function(){ area.scrollTop = area.scrollHeight; }, 50);
+}
+
+function showQuickButtons(){
+  var el = document.getElementById('chat-quick-area');
+  if(el) el.style.display = 'block';
+}
+
+function hideQuickButtons(){
+  var el = document.getElementById('chat-quick-area');
+  if(el) el.style.display = 'none';
+}
+
+function autoResizeChatInput(){
+  var el = document.getElementById('chat-input');
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+}
+
+function updateSendBtn(){
+  var input = document.getElementById('chat-input');
+  var btn = document.getElementById('chat-send-btn');
+  var hasText = input.value.trim().length > 0;
+  btn.disabled = !hasText;
+  btn.className = 'chat-send-btn' + (hasText ? ' chat-send-active' : '');
+}
+
+function chatInputKeydown(e){
+  if(e.key==='Enter' && !e.shiftKey){
+    e.preventDefault();
+    sendChatMessage();
+  }
+}
+
+async function sendChatMessage(text){
+  var input = document.getElementById('chat-input');
+  if(!text) text = input.value;
+  if(!text || !text.trim() || isChatLoading) return;
+  text = text.trim();
+  isChatLoading = true;
+
+  appendChatBubble('user', text);
+  chatHistory.push({role: 'user', content: text});
+
+  input.value = '';
+  input.style.height = 'auto';
+  updateSendBtn();
+  hideQuickButtons();
+  showTypingIndicator();
+
+  var sys = '당신은 "달토"라는 이름의 사주 전문 AI 상담사입니다. 달토는 귀여운 토끼 캐릭터이지만 사주 분석은 매우 전문적입니다.\n\n';
+  sys += '## 달토의 성격\n';
+  sys += '- 따뜻하고 공감을 잘 하는 전문 상담사\n';
+  sys += '- 사주 용어를 쉽게 풀어서 설명\n';
+  sys += '- 긍정적이면서도 현실적인 조언\n';
+  sys += '- 이모지를 적절히 사용해서 친근하게\n';
+  sys += '- 답변은 상세하게, 최소 5문장 이상으로\n';
+  sys += '- 사주학 원리를 근거로 설명하되 쉬운 비유를 곁들여줘\n';
+  sys += '- 마크다운 문법 절대 사용하지 마. **볼드**, # 헤더 같은거 쓰지마. 일반 텍스트로만.\n\n';
+
+  if(chatSaju){
+    sys += '## 상담자 사주 정보\n';
+    sys += JSON.stringify(chatSaju) + '\n\n';
+  }
+  if(chatMbti){
+    sys += '## 상담자 MBTI: ' + chatMbti + '\n\n';
+  }
+  sys += '한국어로만 답변하세요.';
+  sys += '\n\n[CRITICAL INSTRUCTION] You MUST respond with plain text only. No JSON, no markdown. Just natural conversational Korean text.';
+
+  var bubbleId = 'chat-ai-' + Date.now();
+  appendChatBubble('ai', '', bubbleId);
+  hideTypingIndicator();
+
+  try {
+    var r = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({systemPrompt: sys, messages: chatHistory})
+    });
+
+    if(!r.ok) throw new Error('HTTP_' + r.status);
+
+    var reader = r.body.getReader();
+    var decoder = new TextDecoder();
+    var fullText = '', buffer = '';
+
+    while(true){
+      var chunk = await reader.read();
+      if(chunk.done) break;
+      buffer += decoder.decode(chunk.value, {stream: true});
+      var lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+      for(var i = 0; i < lines.length; i++){
+        var line = lines[i].trim();
+        if(!line.startsWith('data: ')) continue;
+        var jsonStr = line.substring(6);
+        if(jsonStr === '[DONE]') continue;
+        try {
+          var evt = JSON.parse(jsonStr);
+          if(evt.type === 'content_block_delta' && evt.delta && evt.delta.text){
+            fullText += evt.delta.text;
+            updateChatBubble(bubbleId, fullText);
+            scrollChatToBottom();
+          }
+        } catch(pe) {}
+      }
+    }
+
+    chatHistory.push({role: 'assistant', content: fullText});
+    if(chatHistory.length > 20){
+      chatHistory = chatHistory.slice(-20);
+    }
+
+  } catch(err) {
+    updateChatBubble(bubbleId, '앗, 연결에 문제가 생겼어요 🥺 다시 한번 물어봐 주시겠어요?');
+    console.error('[MBTS Chat]', err);
+  }
+
+  isChatLoading = false;
+  scrollChatToBottom();
+  showQuickButtons();
+}
 
 initBirth();
 setTimeout(function(){document.getElementById('land-inner').style.opacity='1';document.getElementById('land-inner').style.transform='translateY(0)';},100);
