@@ -1910,7 +1910,13 @@ async function startGunghap(){
         sanitized = sanitized.replace(/[\x00-\x1F\x7F]/g, function(c) { return c === '\n' || c === '\r' || c === '\t' ? c : ''; });
         try { aiResult = JSON.parse(sanitized); } catch(e4) {}
       }
-      if (!aiResult) apiError = 'JSON_PARSE';
+      // 2~4차 성공 시 에러 초기화
+      if (aiResult) {
+        apiError = '';
+        console.log('[MBTS] JSON 추출 성공 (폴백 파서)');
+      } else {
+        apiError = 'JSON_PARSE';
+      }
     }
   }catch(e){
     console.error('[MBTS] 궁합 에러:', e);
@@ -2370,7 +2376,14 @@ async function startAnalysis(){
         sanitized = sanitized.replace(/[\x00-\x1F\x7F]/g, function(c) { return c === '\n' || c === '\r' || c === '\t' ? c : ''; });
         try { result = JSON.parse(sanitized); } catch(e4) {}
       }
-      if (!result) { apiError = 'JSON_PARSE'; result = mkFB(saju, mt, gg); }
+      // 2~4차 성공 시 에러 초기화
+      if (result) {
+        apiError = '';
+        console.log('[MBTS] JSON 추출 성공 (폴백 파서)');
+      } else {
+        apiError = 'JSON_PARSE';
+        result = mkFB(saju, mt, gg);
+      }
     }
     if(result) console.log('[MBTS] 분석 완료. 항목 수:', (result.categories||[]).reduce(function(s,c){return s+(c.items||[]).length;},0));
     // ★ v29.1: 후처리 검증 (대운 나이 등 팩트 교정)
