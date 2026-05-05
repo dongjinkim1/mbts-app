@@ -1380,7 +1380,12 @@
       endpoint: '/api/chat'
     }, {
       onChunk: function(fullText) {
-        // 백그라운드 누적만, 화면 업데이트 안 함
+        var tb = document.getElementById('chatTypingBubble');
+        if (tb && fullText) {
+          tb.style.cssText = 'background:#fff;border-radius:0 16px 16px 16px;padding:12px 16px;font-size:14.5px;line-height:1.75;color:#333;max-width:85%;box-shadow:0 1px 4px rgba(0,0,0,0.04)';
+          tb.innerHTML = textToHtml(fullText);
+          scrollChatToBottom();
+        }
       },
       onComplete: function(fullText) {
         // 후속 질문 파싱
