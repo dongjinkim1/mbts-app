@@ -104,6 +104,7 @@
           else if (gg.strengthGrade === '신약' || gg.strengthGrade === '극신약') condition = '신약';
 
           var animal = getAnimalResult(oheng, dominantSS, condition);
+          var dw = calcDaewoon(saju, y, m, d, h || null, min || null, gender);
           if (!animal || !animal.mod) { _fail('동물 매칭에 실패했어요'); return; }
 
           // ── 히스토리 저장 ──
@@ -113,9 +114,9 @@
             name: nameVal || '나',
             isMyProfile: window._isMyProfile || false,
             input: { y:y, m:m, d:d, h:h, min:min, gender:gender },
-            saju: saju, gg: gg,
+            saju: saju, gg: gg, dw: dw,
             mbti: mbtiStr,
-            mbtiObj: { ch: mbtiCh.slice(), it: mbtiIt.slice() },
+            mbtiObj: { type: mbtiStr, ch: mbtiCh.slice(), it: mbtiIt.slice(), cf: (typeof TY!=='undefined'&&TY[mbtiStr])?TY[mbtiStr].cf:'', axes: [{side:mbtiCh[0]==='L'?'E':'I',pct:mbtiIt[0]||60},{side:mbtiCh[1]==='L'?'S':'N',pct:mbtiIt[1]||60},{side:mbtiCh[2]==='L'?'T':'F',pct:mbtiIt[2]||60},{side:mbtiCh[3]==='L'?'J':'P',pct:mbtiIt[3]||60}] },
             animalEmoji: animal.emoji,
             animalTag: animal.mod.tag,
             animalIlju: ilju
