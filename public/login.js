@@ -222,7 +222,6 @@ function doLogout() {
   try { localStorage.removeItem('mbts_gh_history'); } catch(e) {}
   try { localStorage.removeItem('mbts_active_job'); } catch(e) {}
   try { localStorage.removeItem('mbts_lastResult'); } catch(e) {}
-  try { localStorage.removeItem('mbts_chat_me'); } catch(e) {}
   try { localStorage.removeItem('mbts_chat_count'); } catch(e) {}
   updateLoginUI();
   if (typeof go === 'function') go('pgLanding');
