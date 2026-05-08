@@ -1267,17 +1267,60 @@ function startRealAnalysis(params){
           // 서버 아직 시작 안 함 — 대기 (타임아웃으로 자연 종료)
           console.log('[MBTS] saju job pending, 대기 중');
         } else if (statusData.status === 'partial') {
-          clearInterval(_pollTimer);
-          window._MBTS_activePollTimer = null;
-          _isAnalyzing = false;
-          window._MBTS_analyzeInFlight = false;
-          localStorage.removeItem('mbts_active_job');
-          if(window._loadTimers){window._loadTimers.forEach(clearTimeout);window._loadTimers=[];}
-          phase.innerHTML = '분석이 불완전하게 끝났어요 😢';
-          phase.style.fontWeight = '600'; phase.style.color = '#E8453C';
-          logo.style.animation = 'none';
-          alert('분석이 불완전해요. 다시 시도해주세요.');
-          setTimeout(function(){ go('pgBirth'); }, 1000);
+          // FIX: partial이어도 result.text 파싱 시도 — 성공하면 정상 렌더링
+          var _canRecover = false;
+          if (statusData.result && statusData.result.text) {
+            try {
+              var _pText = statusData.result.text.replace(/```json|```/g, '').trim();
+              var _pParsed = null;
+              try { _pParsed = JSON.parse(_pText); } catch(e) {
+                var _fb = _pText.indexOf('{'), _lb = _pText.lastIndexOf('}');
+                if (_fb >= 0 && _lb > _fb) {
+                  try { _pParsed = JSON.parse(_pText.substring(_fb, _lb + 1)); } catch(e2) {}
+                }
+              }
+              if (!_pParsed) {
+                try {
+                  var _raw = _pText.substring(_pText.indexOf('{'));
+                  var _oB=(_raw.match(/{/g)||[]).length, _cB=(_raw.match(/}/g)||[]).length;
+                  var _oK=(_raw.match(/\[/g)||[]).length, _cK=(_raw.match(/\]/g)||[]).length;
+                  while(_cK<_oK){_raw+=']';_cK++;}
+                  while(_cB<_oB){_raw+='}';_cB++;}
+                  _raw=_raw.replace(/,\s*([}\]])/g,'$1');
+                  _pParsed = JSON.parse(_raw);
+                } catch(e3) {}
+              }
+              if (_pParsed && _pParsed.categories && _pParsed.categories.length > 0) {
+                var _totalSubs = 0;
+                _pParsed.categories.forEach(function(c){ _totalSubs += (c.subs||[]).length; });
+                if (_totalSubs >= 5) {
+                  console.log('[MBTS] partial 복구 성공:', _totalSubs, 'subs');
+                  _canRecover = true;
+                  // done과 동일한 처리 흐름으로 진입
+                  clearInterval(_pollTimer);
+                  localStorage.removeItem('mbts_active_job');
+                  if(window._loadTimers){window._loadTimers.forEach(clearTimeout);window._loadTimers=[];}
+                  statusData.status = 'done';
+                  statusData.result.text = statusData.result.text;
+                  // done 분기의 파싱+렌더링 로직을 재활용하기 위해
+                  // 아래 done 분기가 다음 폴링에서 처리하도록 status 변경
+                }
+              }
+            } catch(e) { console.warn('[MBTS] partial 복구 시도 실패:', e); }
+          }
+          if (!_canRecover) {
+            clearInterval(_pollTimer);
+            window._MBTS_activePollTimer = null;
+            _isAnalyzing = false;
+            window._MBTS_analyzeInFlight = false;
+            localStorage.removeItem('mbts_active_job');
+            if(window._loadTimers){window._loadTimers.forEach(clearTimeout);window._loadTimers=[];}
+            phase.innerHTML = '분석이 불완전하게 끝났어요 😢';
+            phase.style.fontWeight = '600'; phase.style.color = '#E8453C';
+            logo.style.animation = 'none';
+            alert('분석이 불완전해요. 다시 시도해주세요.');
+            setTimeout(function(){ go('pgBirth'); }, 1000);
+          }
         }
       } catch(pollErr) {
         console.warn('[MBTS] polling 에러:', pollErr);
