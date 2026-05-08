@@ -1424,6 +1424,12 @@
       prompt.systemPrompt += '\n\uc774\ubbf8 \uad81\ud569 \ubd84\uc11d\uc774 \uc644\ub8cc\ub41c \uc0c1\ud0dc\uc785\ub2c8\ub2e4. \uacb0\uacfc\ub97c \ucc38\uace0\ud558\uc5ec \uae4a\uc774 \uc788\ub294 \uc870\uc5b8\uc744 \ud574\uc8fc\uc138\uc694.\n';
     }
 
+    // ── 전문용어 금지 (2층 방어) ──
+    prompt.systemPrompt += '\n\n## 전문용어 금지 (절대 규칙)\n';
+    prompt.systemPrompt += '사주 전문용어(십성명, 천간지지, 신살명, 격국명, 12운성명, 합충형해, 한자, 오행분석용어) 절대 사용 금지.\n';
+    prompt.systemPrompt += '괄호 안 힌트를 참고해서 자연어로만 말하세요. 같은 의미를 쉬운 비유와 일상 언어로 전달하세요.\n';
+    prompt.systemPrompt += 'MBTI 인지기능 코드(Fi, Ni 등), 학술용어("주기능", "Ni-Fi 루프")도 노출 금지. "~한 성향", "~하는 스타일"로 풀어쓰세요.\n';
+
     // 후속 질문 추천 지시
     prompt.systemPrompt += '\n\n## 후속 질문 추천 (필수)\n';
     prompt.systemPrompt += '답변 맨 끝에 반드시 사용자가 이어서 물어볼 만한 후속 질문 3개를 아래 형식으로 붙이세요.\n';

@@ -2,6 +2,7 @@ import Anthropic from '@anthropic-ai/sdk'
 import { logError } from '@/lib/errorLog'
 import { getServiceSupabase } from '@/lib/supabase'
 import { checkRateLimit } from '@/lib/rate-limiter'
+import { applyTermReplace } from '@/lib/prompt-builder-usr'
 
 export const maxDuration = 300
 
@@ -62,11 +63,14 @@ export async function POST(request) {
     const useModel = model || MODEL
     console.log(`[chat] 모델: ${useModel}, 메시지 수: ${messages.length}`)
 
+    // 채팅 systemPrompt 내 사주 전문용어 자연어 치환
+    const cleanedPrompt = applyTermReplace(systemPrompt)
+
     const stream = await client.messages.create({
       model: useModel,
       max_tokens: 4000,
       stream: true,
-      system: systemPrompt,
+      system: cleanedPrompt,
       messages: messages,
     })
 
