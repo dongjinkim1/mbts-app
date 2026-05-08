@@ -70,7 +70,11 @@ export async function POST(request) {
       model: useModel,
       max_tokens: 4000,
       stream: true,
-      system: cleanedPrompt,
+      system: [{
+        type: 'text',
+        text: cleanedPrompt,
+        cache_control: { type: 'ephemeral' }
+      }],
       messages: messages,
     })
 
