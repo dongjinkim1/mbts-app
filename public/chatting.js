@@ -17,6 +17,110 @@
   }
 
   // ══════════════════════════════════
+  // PART A-2: 컴팩트 컨텍스트 빌더 (로드 방식)
+  // ══════════════════════════════════
+
+  function buildCompactContext(t, label) {
+    if (!t || !t.saju) return '';
+    var s = t.saju, g = t.gg || {}, d = t.dw || {};
+    var gender = (t.input && t.input.gender) ? t.input.gender : '';
+    var ctx = '\n\n## ' + label + '\n';
+
+    // ① 핵심 키값
+    var ilju = (s.P && s.P[2]) ? s.P[2].s + s.P[2].b : '';
+    ctx += '- 일주: ' + ilju + ' · 일간: ' + (s.dm || '') + '(' + (s.dmEl || '') + ')\n';
+    ctx += '- MBTI: ' + (t.mbti || '미상') + '\n';
+    ctx += '- 격국: ' + (g.gyeokgukName || '') + ' · 용신: ' + (g.yongshin || '') + ' [' + (g.yongshinType || '') + ']\n';
+    ctx += '- 강약: ' + (g.strengthGrade || '') + ' ' + (g.strengthScore || '') + '점';
+    ctx += ' (자기편=' + (g.selfStr != null ? g.selfStr.toFixed(1) : '?') + ' vs 상대편=' + (g.otherStr != null ? g.otherStr.toFixed(1) : '?') + ')';
+    ctx += (g.deukryeong ? ' [득령]' : ' [실령]') + '\n';
+    ctx += '- 사주: ' + (s.P ? s.P.map(function(p){ return p.s + p.b; }).join(' ') : '') + '\n';
+    ctx += '- 오행: 목=' + (s.el ? s.el['목'] : '?') + ' 화=' + (s.el ? s.el['화'] : '?') + ' 토=' + (s.el ? s.el['토'] : '?') + ' 금=' + (s.el ? s.el['금'] : '?') + ' 수=' + (s.el ? s.el['수'] : '?') + '\n';
+    ctx += '- 부족오행: ' + ((s.lackFull && s.lackFull.length > 0) ? s.lackFull.join(',') : '없음') + '\n';
+    if (g.cnt) {
+      ctx += '- 십성비중: 비겁=' + (g.cnt['비겁']||0).toFixed(1) + ' 식상=' + (g.cnt['식상']||0).toFixed(1) + ' 재성=' + (g.cnt['재성']||0).toFixed(1) + ' 관성=' + (g.cnt['관성']||0).toFixed(1) + ' 인성=' + (g.cnt['인성']||0).toFixed(1) + '\n';
+    }
+
+    // ② aiResult 로드 (프리미엄 풀이 결과 — 이미 저장된 것)
+    if (t.aiResult) {
+      ctx += '\n### AI 분석 결과 (기존 풀이)\n';
+      ctx += (typeof t.aiResult === 'string' ? t.aiResult : safeStr(t.aiResult)) + '\n';
+    }
+
+    // ③ enriched 텍스트 (로컬 재계산 — SJ_enrichSajuData)
+    var en = null;
+    if (s && g && d && typeof SJ_enrichSajuData === 'function') {
+      try { en = SJ_enrichSajuData(s, g, d, gender, t.mbti || ''); } catch(e) {}
+    }
+    if (en) {
+      ctx += '\n### 보강 분석\n';
+      if (en.gyeokguk) {
+        if (en.gyeokguk.osinText) ctx += en.gyeokguk.osinText + '\n';
+        if (en.gyeokguk.tongbyeonText) ctx += en.gyeokguk.tongbyeonText + '\n';
+        if (en.gyeokguk.strengthText) ctx += en.gyeokguk.strengthText + '\n';
+        if (en.gyeokguk.yinYangText) ctx += en.gyeokguk.yinYangText + '\n';
+      }
+      if (en.context) {
+        if (en.context.yukchinText) ctx += en.context.yukchinText + '\n';
+        if (en.context.unsungText) ctx += en.context.unsungText + '\n';
+        if (en.context.gongmangText) ctx += en.context.gongmangText + '\n';
+        if (en.context.specialSalsText) ctx += en.context.specialSalsText + '\n';
+      }
+      if (en.daewoon) {
+        if (en.daewoon.gyowoongiText) ctx += en.daewoon.gyowoongiText + '\n';
+        if (en.daewoon.roadmapText) ctx += en.daewoon.roadmapText + '\n';
+      }
+      if (en.hints) {
+        if (en.hints.healthText) ctx += en.hints.healthText + '\n';
+        if (en.hints.jobText) ctx += en.hints.jobText + '\n';
+        if (en.hints.hapTriggerText) ctx += en.hints.hapTriggerText + '\n';
+      }
+      if (en.wonkuk && en.wonkuk.hyungText) ctx += en.wonkuk.hyungText + '\n';
+    }
+
+    // ④ 현재 대운 1줄
+    if (d.list && d.currentAge) {
+      var curDW = null;
+      for (var di = 0; di < d.list.length; di++) {
+        if (d.currentAge >= d.list[di].startAge && d.currentAge <= d.list[di].endAge) {
+          curDW = d.list[di]; break;
+        }
+      }
+      if (curDW) {
+        ctx += '\n### 현재 대운\n';
+        ctx += curDW.gan + curDW.ji + '(' + (curDW.ganH||'') + (curDW.jiH||'') + ') ' + (curDW.ss||'') + '운 (' + curDW.startAge + '~' + curDW.endAge + '세)\n';
+      }
+    }
+
+    // ⑤ 원국 합충형해
+    if (typeof SJ_buildWonkukRelations === 'function') {
+      try {
+        var wr = SJ_buildWonkukRelations(s);
+        if (wr) ctx += '\n### 원국 합충형해\n' + wr + '\n';
+      } catch(e) {}
+    }
+
+    // ⑥ 사주×MBTI 교차 패턴 (로컬 재계산)
+    if (typeof buildUserTags === 'function' && typeof buildPatternPrompt === 'function') {
+      try {
+        var tags = buildUserTags(s, g, d, t.mbti || '', null);
+        var pt = buildPatternPrompt('premium', tags);
+        if (pt) ctx += '\n### 사주×MBTI 교차 패턴\n' + pt + '\n';
+      } catch(e) {}
+    }
+
+    // ⑦ 공망 상세
+    if (typeof SJ_buildGongmangFull === 'function') {
+      try {
+        var gm = SJ_buildGongmangFull(s);
+        if (gm) ctx += '\n### 공망\n' + gm + '\n';
+      } catch(e) {}
+    }
+
+    return ctx;
+  }
+
+  // ══════════════════════════════════
   // PART B: 목록 화면 렌더링
   // ══════════════════════════════════
 
@@ -1294,68 +1398,30 @@
       prompt.systemPrompt += '- \ub300\ud654 \uc911\uc5d0 "\ud83e\udd0d \uc0c1\ub0e5 \ub2ec\ud1a0 \uc0c1\ub2f4 ON!" \uba54\uc2dc\uc9c0\uac00 \ubcf4\uc774\uba74 \uadf8\uac74 \uc774\uc804\uc5d0 \uc0c1\ub0e5 \ubaa8\ub4dc\uc600\ub358 \uad6c\uac04\uc774\uc5d0\uc694. "\ud6c4\ud6c4\ud6c7 \uc785 \ubc14\ub978 \ub9d0 \uc704\uc8fc\uad70 \ud83d\ude0f \ud329\ud2b8\ub85c \ub54c\ub824\uc918? \uc88b\uc544 \uc774\ub188\uc544!" \uac19\uc740 \uc2dd\uc73c\ub85c \ub9ac\uc561\uc158.\n';
     }
 
-    // ── _ft에 보강 데이터 붙여서 통째로 전달 ──
-    if (_ft && _ft.saju && _ft.gg && _ft.dw) {
-      var gender = (_ft.input && _ft.input.gender) ? _ft.input.gender : '';
-      if (typeof SJ_enrichSajuData === 'function') {
-        _ft.enriched = SJ_enrichSajuData(_ft.saju, _ft.gg, _ft.dw, gender, _ft.mbti || '');
-      }
-      if (typeof SJ_calcWolun === 'function') {
-        _ft.wolun = SJ_calcWolun(_ft.saju);
-      }
-      if (typeof SJ_buildWonkukRelations === 'function') {
-        _ft.wonkukRelations = SJ_buildWonkukRelations(_ft.saju);
-      }
-      if (typeof SJ_buildGongmangFull === 'function') {
-        _ft.gongmangFull = SJ_buildGongmangFull(_ft.saju);
-      }
-    }
-    if (_ft) {
-      prompt.systemPrompt += '\n\n## \uc774 \uc0ac\uc6a9\uc790\uc758 \uc804\uccb4 MBTS \ub370\uc774\ud130 (\uc0ac\uc8fc\uc6d0\uad6d+\uaca9\uad6d+\uc6a9\uc2e0+\ub300\uc6b4+\uc138\uc6b4+\uc6d4\uc6b4+\uc2e0\uc0b4+\uc554\ud569+\ud615\ucda9+\uacf5\ub9dd+12\uc6b4\uc131+\uc624\ud589+MBTI+AI\ud480\uc774+\ubcf4\uac15\ubd84\uc11d \ud3ec\ud568)\n';
-      prompt.systemPrompt += '\ubaa8\ub4e0 \ub370\uc774\ud130\ub97c \uc219\uc9c0\ud558\uace0, \uc0ac\uc8fc \uc6a9\uc5b4\uc640 \uc218\uce58\ub97c \uc815\ud655\ud788 \uc778\uc6a9\ud558\uba70, \uae30\uc874 \ud480\uc774\uc640 \uc77c\uad00\ub418\uac8c \ub2f5\ubcc0\ud558\uc138\uc694.\n\n';
-      prompt.systemPrompt += safeStr(_ft) + '\n';
+    // ── 컴팩트 컨텍스트 로드 (JSON 통째 덤프 → 핵심 데이터만 추출) ──
+    if (_ft && _ft.saju) {
+      prompt.systemPrompt += buildCompactContext(_ft, '\uc0ac\uc6a9\uc790 \uc0ac\uc8fc \ud504\ub85c\ud544');
+      prompt.systemPrompt += '\n\uc704 \ub370\uc774\ud130\ub97c \uc219\uc9c0\ud558\uace0, \uc0ac\uc8fc \uc6a9\uc5b4\uc640 \uc218\uce58\ub97c \uc815\ud655\ud788 \uc778\uc6a9\ud558\uba70, \uae30\uc874 \ud480\uc774\uc640 \uc77c\uad00\ub418\uac8c \ub2f5\ubcc0\ud558\uc138\uc694.\n';
     }
 
     if (chatContext && chatContext.type === 'person' && chatContext.person) {
       var cp = chatContext.person;
-      if (cp.saju && cp.gg && cp.dw) {
-        var pGender = (cp.input && cp.input.gender) ? cp.input.gender : '';
-        if (typeof SJ_enrichSajuData === 'function') {
-          cp.enriched = SJ_enrichSajuData(cp.saju, cp.gg, cp.dw, pGender, cp.mbti || '');
-        }
-        if (typeof SJ_calcWolun === 'function') {
-          cp.wolun = SJ_calcWolun(cp.saju);
-        }
+      if (cp.saju) {
+        prompt.systemPrompt += buildCompactContext(cp, '\uc0c1\ub2f4 \ub300\uc0c1\uc790 (' + (cp.name || '') + ') \uc0ac\uc8fc \ud504\ub85c\ud544');
       }
-      prompt.systemPrompt += '\n\n## \uc0c1\ub2f4 \ub300\uc0c1\uc790 \uc804\uccb4 MBTS \ub370\uc774\ud130\n';
-      prompt.systemPrompt += safeStr(cp) + '\n';
-    }
-
-    // ── 맥락별 시스템 프롬프트 보강 (engine.js 미수정) ──
-    if (chatContext && chatContext.type === 'person') {
-      var pp = chatContext.person || {};
-      prompt.systemPrompt += '\n\n## \uc0c1\ub2f4 \ub300\uc0c1\uc790 \uc815\ubcf4\n';
-      prompt.systemPrompt += '\uc774\ub984: ' + (pp.name || '') + '\n';
-      prompt.systemPrompt += 'MBTI: ' + (pp.mbti || '') + '\n';
-      if (pp.ilju) prompt.systemPrompt += '\uc77c\uc8fc: ' + pp.ilju + '\n';
-      if (pp.saju) prompt.systemPrompt += '\uc0ac\uc8fc: ' + JSON.stringify(pp.saju) + '\n';
-      if (pp.gg) prompt.systemPrompt += '\uaca9\uad6d: ' + JSON.stringify(pp.gg) + '\n';
-      if (pp.dw) prompt.systemPrompt += '\ub300\uc6b4: ' + JSON.stringify(pp.dw) + '\n';
-      prompt.systemPrompt += '\n\uc0ac\uc6a9\uc790\uac00 \uc774 \uc0ac\ub78c\uc5d0 \ub300\ud574 \uc9c8\ubb38\ud569\ub2c8\ub2e4. \uc774 \uc0ac\ub78c\uc758 \uc0ac\uc8fc\uc640 MBTI\ub97c \uae30\ubc18\uc73c\ub85c \ubd84\uc11d\ud574\uc8fc\uc138\uc694.\n';
-      prompt.systemPrompt += '\uc0ac\uc6a9\uc790\uc758 \uc0ac\uc8fc(\uc704\uc5d0 \uc788\uc74c)\uc640 \ub300\uc0c1\uc790\uc758 \uc0ac\uc8fc\ub97c \uad50\ucc28 \ubd84\uc11d\ud574\uc11c \ub2f5\ubcc0\ud574\uc8fc\uc138\uc694.\n';
+      prompt.systemPrompt += '\n\uc0ac\uc6a9\uc790\uac00 \uc774 \uc0ac\ub78c\uc5d0 \ub300\ud574 \uc9c8\ubb38\ud569\ub2c8\ub2e4. \uc591\ucabd \uc0ac\uc8fc\ub97c \uad50\ucc28 \ubd84\uc11d\ud574\uc11c \ub2f5\ubcc0\ud558\uc138\uc694.\n';
     }
 
     if (chatContext && chatContext.type === 'gunghap') {
       var gp = chatContext.person || {};
       var gr = chatContext.ghResult || {};
-      prompt.systemPrompt += '\n\n## \uad81\ud569 \ubd84\uc11d \uacb0\uacfc (\uc774\ubbf8 \uc644\ub8cc)\n';
+      if (gp.saju) {
+        prompt.systemPrompt += buildCompactContext(gp, '\uad81\ud569 \ub300\uc0c1\uc790 (' + (gp.name || '') + ') \uc0ac\uc8fc \ud504\ub85c\ud544');
+      }
+      prompt.systemPrompt += '\n\n## \uad81\ud569 \ubd84\uc11d \uacb0\uacfc\n';
       prompt.systemPrompt += '\uad00\uacc4: ' + (chatContext.relType || '') + '\n';
       if (gr.scores) prompt.systemPrompt += '\uc810\uc218: ' + JSON.stringify(gr.scores) + '\n';
-      prompt.systemPrompt += '\ub300\uc0c1\uc790: ' + (gp.name || '') + '\n';
-      if (gp.mbti) prompt.systemPrompt += 'MBTI: ' + gp.mbti + '\n';
-      if (gp.saju) prompt.systemPrompt += '\uc0ac\uc8fc: ' + JSON.stringify(gp.saju) + '\n';
-      prompt.systemPrompt += '\n\uc774 \uad81\ud569\uc5d0 \ub300\ud574 \ucd94\uac00 \uc9c8\ubb38\ud558\uba74 \uc704 \uacb0\uacfc\ub97c \ubc14\ud0d5\uc73c\ub85c \uc0c1\uc138\ud788 \ub2f5\ubcc0\ud574\uc8fc\uc138\uc694.\n';
-      prompt.systemPrompt += '\uc774\ubbf8 \uad81\ud569 \ubd84\uc11d\uc774 \ub05d\ub09c \uc0c1\ud0dc\uc774\ubbc0\ub85c, \uacb0\uacfc\ub97c \ucc38\uace0\ud558\uba74\uc11c \ub354 \uae4a\uc774 \uc788\ub294 \uc870\uc5b8\uc744 \ud574\uc8fc\uc138\uc694.\n';
+      prompt.systemPrompt += '\n\uc774\ubbf8 \uad81\ud569 \ubd84\uc11d\uc774 \uc644\ub8cc\ub41c \uc0c1\ud0dc\uc785\ub2c8\ub2e4. \uacb0\uacfc\ub97c \ucc38\uace0\ud558\uc5ec \uae4a\uc774 \uc788\ub294 \uc870\uc5b8\uc744 \ud574\uc8fc\uc138\uc694.\n';
     }
 
     // 후속 질문 추천 지시
