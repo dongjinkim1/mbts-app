@@ -51,6 +51,8 @@ nul
 
 # translate-cross 체크포인트 (런타임 임시)
 /scripts/.translate-checkpoint/
+/scripts/.translate-checkpoint-v3/
+/scripts/.pattern-data-original.js
 /public/all_patterns_full.txt
 
 # Claude Code local configs
