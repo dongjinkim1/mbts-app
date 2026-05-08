@@ -41,10 +41,26 @@
       ctx += '- 십성비중: 비겁=' + (g.cnt['비겁']||0).toFixed(1) + ' 식상=' + (g.cnt['식상']||0).toFixed(1) + ' 재성=' + (g.cnt['재성']||0).toFixed(1) + ' 관성=' + (g.cnt['관성']||0).toFixed(1) + ' 인성=' + (g.cnt['인성']||0).toFixed(1) + '\n';
     }
 
-    // ② aiResult 로드 (프리미엄 풀이 결과 — 이미 저장된 것)
+    // ② aiResult 축약 로드 — 각 sub의 h + b 앞 150자만 (systemPrompt 크기 제한 방어)
     if (t.aiResult) {
-      ctx += '\n### AI 분석 결과 (기존 풀이)\n';
-      ctx += (typeof t.aiResult === 'string' ? t.aiResult : safeStr(t.aiResult)) + '\n';
+      ctx += '\n### AI 분석 요약 (기존 풀이 핵심)\n';
+      var _ai = t.aiResult;
+      if (typeof _ai === 'string') {
+        try { _ai = JSON.parse(_ai); } catch(e) { _ai = null; }
+      }
+      if (_ai && _ai.categories) {
+        _ai.categories.forEach(function(cat) {
+          (cat.subs || []).forEach(function(sub) {
+            if (sub.h && sub.b) {
+              var bShort = sub.b.length > 150 ? sub.b.substring(0, 150) + '…' : sub.b;
+              ctx += '· ' + sub.h + ': ' + bShort + '\n';
+            }
+          });
+        });
+      } else if (_ai) {
+        var _aiStr = safeStr(_ai);
+        ctx += (_aiStr.length > 3000 ? _aiStr.substring(0, 3000) + '…(축약됨)' : _aiStr) + '\n';
+      }
     }
 
     // ③ enriched 텍스트 (로컬 재계산 — SJ_enrichSajuData)
