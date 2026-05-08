@@ -15,7 +15,7 @@ const client = new Anthropic({ apiKey });
 
 const BATCH_SIZE = 40;
 const PARALLEL = 5;
-const MAX_LOOP = 3;
+const MAX_LOOP = 10;  // NO 0개 되면 자동 종료
 const MODEL = 'claude-sonnet-4-6';
 
 const PATTERN_PATH = path.join(__dirname, '..', 'lib', 'pattern-data.js');
