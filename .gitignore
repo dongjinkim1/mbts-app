@@ -48,6 +48,9 @@ nul
 
 # Premium pattern source files (internal only — must NOT be in public/)
 /scripts/patterns/
+
+# translate-cross 체크포인트 (런타임 임시)
+/scripts/.translate-checkpoint/
 /public/all_patterns_full.txt
 
 # Claude Code local configs

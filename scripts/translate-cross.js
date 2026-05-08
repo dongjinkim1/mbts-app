@@ -20,6 +20,30 @@ const PARALLEL = 5;
 const MAX_RETRY = 2;
 const MODEL = 'claude-sonnet-4-6';
 
+// ── 체크포인트 디렉토리 (이어하기 지원) ──
+const CHECKPOINT_DIR = path.join(__dirname, '.translate-checkpoint');
+if (!fs.existsSync(CHECKPOINT_DIR)) fs.mkdirSync(CHECKPOINT_DIR, { recursive: true });
+
+function loadCheckpoint(name) {
+  const p = path.join(CHECKPOINT_DIR, name + '.json');
+  if (!fs.existsSync(p)) return {};
+  try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch(e) { return {}; }
+}
+
+function saveCheckpoint(name, obj) {
+  const p = path.join(CHECKPOINT_DIR, name + '.json');
+  const tmp = p + '.tmp';
+  fs.writeFileSync(tmp, JSON.stringify(obj));
+  try { fs.renameSync(tmp, p); } catch(e) { fs.writeFileSync(p, JSON.stringify(obj)); }
+}
+
+function clearCheckpoints() {
+  if (!fs.existsSync(CHECKPOINT_DIR)) return;
+  for (const f of fs.readdirSync(CHECKPOINT_DIR)) {
+    try { fs.unlinkSync(path.join(CHECKPOINT_DIR, f)); } catch(e) {}
+  }
+}
+
 const TERM_MAP = `
 [사주 전문용어 → 자연어 매핑]
 비견=동료/자기 힘, 겁재=경쟁/승부, 식신=재능/표현, 상관=창의/날카로움
@@ -137,21 +161,37 @@ async function main() {
   }
   console.log(`\n📊 ${allPatterns.length}개 패턴 로드`);
 
+  // ── 체크포인트 이어하기: 이미 번역된 ID는 스킵 ──
+  const prevTranslated = loadCheckpoint('translated');
+  const prevDoneCount = Object.keys(prevTranslated).length;
+  if (prevDoneCount > 0) console.log(`📂 체크포인트: 번역 ${prevDoneCount}개 이미 완료 — 스킵`);
+  const remaining = allPatterns.filter(function(p) {
+    return typeof prevTranslated[p.id] !== 'string' || !prevTranslated[p.id];
+  });
+
   const batches = [];
-  for (let i = 0; i < allPatterns.length; i += BATCH_SIZE)
-    batches.push(allPatterns.slice(i, i + BATCH_SIZE));
-  console.log(`📦 ${batches.length}개 배치\n`);
+  for (let i = 0; i < remaining.length; i += BATCH_SIZE)
+    batches.push(remaining.slice(i, i + BATCH_SIZE));
+  console.log(`📦 ${batches.length}개 배치 (남은 ${remaining.length}개)\n`);
 
   // ── 2단계: 번역 ──
   console.log('── 번역 (5 병렬) ──');
-  const translated = await runParallel(batches, translateBatch, '번역');
+  const translated = batches.length > 0
+    ? await runParallel(batches, translateBatch, '번역', 'translated', prevTranslated)
+    : Object.assign({}, prevTranslated);
 
-  // ── 3단계: 검증 ──
+  // ── 3단계: 검증 (체크포인트 이어하기 지원) ──
   console.log('\n── 검증 (5 병렬) ──');
-  const valInput = allPatterns.map(p => ({ id: p.id, cross: p.cross, cross_new: translated[p.id] || p.cross }));
+  const prevValidated = loadCheckpoint('validated');
+  const valDoneCount = Object.keys(prevValidated).length;
+  if (valDoneCount > 0) console.log(`📂 체크포인트: 검증 ${valDoneCount}개 완료 — 스킵`);
+  const valInputAll = allPatterns.map(p => ({ id: p.id, cross: p.cross, cross_new: translated[p.id] || p.cross }));
+  const valInputRemaining = valInputAll.filter(function(it) { return !prevValidated[it.id]; });
   const valBatches = [];
-  for (let i = 0; i < valInput.length; i += BATCH_SIZE) valBatches.push(valInput.slice(i, i + BATCH_SIZE));
-  const valResults = await runParallel(valBatches, validateBatch, '검증');
+  for (let i = 0; i < valInputRemaining.length; i += BATCH_SIZE) valBatches.push(valInputRemaining.slice(i, i + BATCH_SIZE));
+  const valResults = valBatches.length > 0
+    ? await runParallel(valBatches, validateBatch, '검증', 'validated', prevValidated)
+    : Object.assign({}, prevValidated);
 
   const failed = [];
   for (const [id, r] of Object.entries(valResults)) {
@@ -159,20 +199,38 @@ async function main() {
   }
   console.log(`\n✅ ${allPatterns.length - failed.length}개 통과 / ❌ ${failed.length}개 실패`);
 
-  // ── 4단계: 재작업 ──
+  // ── 4단계: 재작업 (각 라운드별 체크포인트) ──
   let retryQueue = failed;
   for (let attempt = 1; attempt <= MAX_RETRY && retryQueue.length > 0; attempt++) {
     console.log(`\n── 재작업 ${attempt}/${MAX_RETRY} (${retryQueue.length}개) ──`);
+
+    // 4-A: 재번역
+    const retryCpName = 'retry-' + attempt + '-translated';
+    const prevRetry = loadCheckpoint(retryCpName);
+    const prevRetryCount = Object.keys(prevRetry).length;
+    if (prevRetryCount > 0) console.log(`  📂 재번역 ${prevRetryCount}개 완료 — 스킵`);
+    const retryRemaining = retryQueue.filter(function(p) { return typeof prevRetry[p.id] !== 'string' || !prevRetry[p.id]; });
     const rBatches = [];
-    for (let i = 0; i < retryQueue.length; i += BATCH_SIZE) rBatches.push(retryQueue.slice(i, i + BATCH_SIZE));
+    for (let i = 0; i < retryRemaining.length; i += BATCH_SIZE) rBatches.push(retryRemaining.slice(i, i + BATCH_SIZE));
 
-    const retried = await runParallel(rBatches, retryBatch, '재작업');
-    for (const [id, c] of Object.entries(retried)) translated[id] = c;
+    const retried = rBatches.length > 0
+      ? await runParallel(rBatches, retryBatch, '재작업', retryCpName, prevRetry)
+      : Object.assign({}, prevRetry);
+    for (const [id, c] of Object.entries(retried)) {
+      if (typeof c === 'string' && c) translated[id] = c;
+    }
+    saveCheckpoint('translated', translated);
 
+    // 4-B: 재검증
+    const reValCpName = 'retry-' + attempt + '-validated';
+    const prevReVal = loadCheckpoint(reValCpName);
     const reInput = retryQueue.map(p => ({ id: p.id, cross: p.cross, cross_new: translated[p.id] || p.cross }));
+    const reInputRemaining = reInput.filter(function(it) { return !prevReVal[it.id]; });
     const reBatches = [];
-    for (let i = 0; i < reInput.length; i += BATCH_SIZE) reBatches.push(reInput.slice(i, i + BATCH_SIZE));
-    const reResults = await runParallel(reBatches, validateBatch, '재검증');
+    for (let i = 0; i < reInputRemaining.length; i += BATCH_SIZE) reBatches.push(reInputRemaining.slice(i, i + BATCH_SIZE));
+    const reResults = reBatches.length > 0
+      ? await runParallel(reBatches, validateBatch, '재검증', reValCpName, prevReVal)
+      : Object.assign({}, prevReVal);
 
     retryQueue = [];
     for (const item of reInput) {
@@ -226,19 +284,29 @@ async function main() {
     console.log('✅ public/ 동기화');
   }
 
+  let syntaxOK = false;
   try {
     require('child_process').execSync('node -c ' + patternPath, { stdio: 'pipe' });
     console.log('✅ 구문 검사 통과');
+    syntaxOK = true;
   } catch (e) {
     console.error('❌ 구문 오류! .bak에서 복원하세요');
+  }
+
+  // 성공 시 체크포인트 cleanup
+  if (syntaxOK && ok > 0) {
+    clearCheckpoints();
+    console.log('🧹 체크포인트 정리 완료');
+  } else {
+    console.log('ℹ️ 체크포인트 보존 (재실행 시 이어하기)');
   }
 
   console.log('\n🏁 완료');
 }
 
 // ═══════════════════════════════════════════
-async function runParallel(batches, fn, label) {
-  const results = {};
+async function runParallel(batches, fn, label, checkpointName, initial) {
+  const results = initial ? Object.assign({}, initial) : {};
   const queue = [...batches];
   let done = 0;
   async function worker(wid) {
@@ -246,13 +314,17 @@ async function runParallel(batches, fn, label) {
       const batch = queue.shift();
       if (!batch) break;
       try {
-        Object.assign(results, await fn(batch, wid));
+        const batchResult = await fn(batch, wid);
+        Object.assign(results, batchResult);
         done++;
+        // 체크포인트: 배치 완료마다 즉시 저장
+        if (checkpointName) saveCheckpoint(checkpointName, results);
         process.stdout.write(`  [${label}] ${done}/${batches.length} (W${wid})\r`);
       } catch (e) {
         console.error(`\n  ❌ W${wid}:`, e.message);
         for (const item of batch) results[item.id] = item.cross || item.cross_new || '';
         done++;
+        if (checkpointName) saveCheckpoint(checkpointName, results);
       }
     }
   }
