@@ -1046,7 +1046,7 @@
     for (var mi = 0; mi < people.length; mi++) {
       if (people[mi].name === '\ub098') { myIcon = people[mi].icon; break; }
     }
-    if (myIcon) sh += '<img src="' + myIcon + '" style="width:70%;height:70%;object-fit:contain">';
+    if (myIcon) sh += '<img src="' + myIcon + '" style="width:100%;height:100%;object-fit:contain">';
     else sh += '\ud83d\udc64';
     sh += '</div>';
     sh += '<div style="flex:1"><div style="font-size:15px;font-weight:600;color:#2E1F4E">\ub098</div>';
@@ -1072,7 +1072,7 @@
           + ';border:1.5px solid ' + (isActive ? 'rgba(139,108,193,0.2)' : 'transparent')
           + '">';
         sh += '<div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#E8DEFF,#F0E6FF);display:flex;align-items:center;justify-content:center;font-size:20px">';
-        if (op.icon) sh += '<img src="' + op.icon + '" style="width:70%;height:70%;object-fit:contain">';
+        if (op.icon) sh += '<img src="' + op.icon + '" style="width:100%;height:100%;object-fit:contain">';
         else sh += '\ud83d\udc64';
         sh += '</div>';
         sh += '<div style="flex:1"><div style="font-size:15px;font-weight:600;color:#2E1F4E">' + _esc(op.name) + '</div>';

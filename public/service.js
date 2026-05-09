@@ -1061,8 +1061,8 @@
     h += '<div style="display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:22px">';
 
     h += '<div style="text-align:center;animation:bmFadeL .6s ease both">';
-    h += '<div style="width:76px;height:76px;border-radius:50%;background:#fff;border:2.5px solid ' + myOc.m + '30;box-shadow:0 4px 16px ' + myOc.m + '15;overflow:hidden;display:flex;align-items:center;justify-content:center">';
-    h += '<img src="' + myIconUrl + '" style="width:78%;height:78%;object-fit:contain" onerror="this.parentNode.innerHTML=\'<span style=\\\'font-size:38px\\\'>' + info.emoji + '</span>\'">';
+    h += '<div style="width:76px;height:76px;border-radius:50%;background:' + myOc.bg + ';border:2.5px solid ' + myOc.m + '30;box-shadow:0 4px 16px ' + myOc.m + '15;overflow:hidden;display:flex;align-items:center;justify-content:center">';
+    h += '<img src="' + myIconUrl + '" style="width:100%;height:100%;object-fit:contain" onerror="this.parentNode.innerHTML=\'<span style=\\\'font-size:38px\\\'>' + info.emoji + '</span>\'">';
     h += '</div><div style="font-size:11px;font-weight:700;color:' + myOc.m + ';margin-top:8px">' + info.animalName + '</div></div>';
 
     h += '<div style="display:flex;flex-direction:column;align-items:center;gap:2px;margin-top:-12px">';
@@ -1070,8 +1070,8 @@
     h += '<div style="width:40px;height:1px;background:linear-gradient(90deg,transparent,rgba(212,115,139,0.3),transparent)"></div></div>';
 
     h += '<div style="text-align:center;animation:bmFadeR .6s ease both">';
-    h += '<div style="width:76px;height:76px;border-radius:50%;background:#fff;border:2.5px solid ' + matchOc.m + '30;box-shadow:0 4px 16px ' + matchOc.m + '15;overflow:hidden;display:flex;align-items:center;justify-content:center">';
-    h += '<img src="' + matchIconUrl + '" style="width:78%;height:78%;object-fit:contain" onerror="this.parentNode.innerHTML=\'<span style=\\\'font-size:38px\\\'>' + match.animal.emoji + '</span>\'">';
+    h += '<div style="width:76px;height:76px;border-radius:50%;background:' + matchOc.bg + ';border:2.5px solid ' + matchOc.m + '30;box-shadow:0 4px 16px ' + matchOc.m + '15;overflow:hidden;display:flex;align-items:center;justify-content:center">';
+    h += '<img src="' + matchIconUrl + '" style="width:100%;height:100%;object-fit:contain" onerror="this.parentNode.innerHTML=\'<span style=\\\'font-size:38px\\\'>' + match.animal.emoji + '</span>\'">';
     h += '</div><div style="font-size:11px;font-weight:700;color:' + matchOc.m + ';margin-top:8px">' + match.animal.name + '</div></div>';
 
     h += '</div>';
@@ -1090,8 +1090,8 @@
     h += '<div style="background:#fff;border-radius:24px;padding:24px 22px;box-shadow:0 2px 20px rgba(0,0,0,0.04);border:1px solid rgba(0,0,0,0.04);animation:bmFadeUp .6s ease both .35s;opacity:0">';
 
     h += '<div style="display:flex;align-items:center;gap:14px;margin-bottom:4px">';
-    h += '<div style="width:52px;height:52px;border-radius:50%;background:#fff;border:2.5px solid ' + matchOc.m + '30;box-shadow:0 4px 16px ' + matchOc.m + '15;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0">';
-    h += '<img src="' + matchIconUrl + '" style="width:78%;height:78%;object-fit:contain" onerror="this.parentNode.innerHTML=\'<span style=\\\'font-size:26px\\\'>' + match.animal.emoji + '</span>\'">';
+    h += '<div style="width:52px;height:52px;border-radius:50%;background:' + matchOc.bg + ';border:2.5px solid ' + matchOc.m + '30;box-shadow:0 4px 16px ' + matchOc.m + '15;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0">';
+    h += '<img src="' + matchIconUrl + '" style="width:100%;height:100%;object-fit:contain" onerror="this.parentNode.innerHTML=\'<span style=\\\'font-size:26px\\\'>' + match.animal.emoji + '</span>\'">';
     h += '</div><div style="flex:1">';
     h += '<div style="font-size:15px;font-weight:800;color:var(--text-1);line-height:1.4">' + match.mod.title + '</div>';
     h += '<div style="display:flex;gap:6px;margin-top:5px;flex-wrap:wrap">';

@@ -74,7 +74,7 @@ function renderProfileView() {
   h += '<div style="background:#fff;border-radius:24px;padding:32px 24px 24px;box-shadow:0 4px 24px rgba(139,108,193,0.08);border:1px solid rgba(139,108,193,0.06)">';
   h += '<div style="text-align:center;margin-bottom:24px">';
   h += '<div style="width:96px;height:96px;border-radius:50%;margin:0 auto 16px;background:linear-gradient(145deg,#F3EDFF,#FFE8F0);display:flex;align-items:center;justify-content:center;font-size:50px;box-shadow:0 6px 24px rgba(139,108,193,0.12);overflow:hidden">';
-  if (animalIcon) { h += '<img src="' + animalIcon + '" style="width:70%;height:70%;object-fit:contain" onerror="this.replaceWith(document.createTextNode(\'' + animalEmoji + '\'))">'; }
+  if (animalIcon) { h += '<img src="' + animalIcon + '" style="width:100%;height:100%;object-fit:contain" onerror="this.replaceWith(document.createTextNode(\'' + animalEmoji + '\'))">'; }
   else { h += animalEmoji; }
   h += '</div>';
   h += '<div style="font-size:17px;font-weight:800;color:#2E1F4E;margin-bottom:4px">' + name + '</div>';
@@ -128,7 +128,7 @@ async function renderProfileEdit() {
   var h = '';
   h += '<div style="background:#fff;border-radius:24px;padding:28px 22px;box-shadow:0 4px 24px rgba(139,108,193,0.08);border:1px solid rgba(139,108,193,0.06)">';
   h += '<div style="text-align:center;margin-bottom:24px"><div style="width:88px;height:88px;border-radius:50%;margin:0 auto 14px;background:linear-gradient(145deg,#F3EDFF,#FFE8F0);display:flex;align-items:center;justify-content:center;font-size:46px;box-shadow:0 6px 20px rgba(139,108,193,0.12);overflow:hidden">';
-  if (animalIcon) { h += '<img src="' + animalIcon + '" style="width:70%;height:70%;object-fit:contain" onerror="this.replaceWith(document.createTextNode(\'' + animalEmoji + '\'))">'; } else { h += animalEmoji; }
+  if (animalIcon) { h += '<img src="' + animalIcon + '" style="width:100%;height:100%;object-fit:contain" onerror="this.replaceWith(document.createTextNode(\'' + animalEmoji + '\'))">'; } else { h += animalEmoji; }
   h += '</div>';
   if (animalTitle) { h += '<div style="font-size:15px;font-weight:700;color:#6B4FA0">' + animalTitle + '</div><div style="font-size:12px;color:#A99BBF;margin-top:3px">' + animalSub + (ilju ? ' · ' + ilju + ' 일주' : '') + '</div>'; }
   else { h += '<div style="font-size:13px;color:#A99BBF">생년월일과 MBTI를 입력하면 동물이 나타나요</div>'; }
@@ -309,7 +309,7 @@ function renderEditProfile(rec) {
 
   // Animal icon
   h += '<div style="text-align:center;margin-bottom:24px"><div style="width:88px;height:88px;border-radius:50%;margin:0 auto 14px;background:linear-gradient(145deg,#F3EDFF,#FFE8F0);display:flex;align-items:center;justify-content:center;font-size:46px;box-shadow:0 6px 20px rgba(139,108,193,0.12);overflow:hidden">';
-  if (animalIcon) { h += '<img src="' + animalIcon + '" style="width:70%;height:70%;object-fit:contain" onerror="this.replaceWith(document.createTextNode(\'' + animalEmoji + '\'))">'; } else { h += animalEmoji; }
+  if (animalIcon) { h += '<img src="' + animalIcon + '" style="width:100%;height:100%;object-fit:contain" onerror="this.replaceWith(document.createTextNode(\'' + animalEmoji + '\'))">'; } else { h += animalEmoji; }
   h += '</div>';
   if (animalTitle) { h += '<div style="font-size:15px;font-weight:700;color:#6B4FA0">' + animalTitle + '</div><div style="font-size:12px;color:#A99BBF;margin-top:3px">' + animalSub + (ilju ? ' · ' + ilju + ' 일주' : '') + '</div>'; }
   else { h += '<div style="font-size:13px;color:#A99BBF">생년월일과 MBTI를 입력하면 동물이 나타나요</div>'; }
@@ -849,7 +849,7 @@ function updateHomeProfile() {
     var h = '<div style="display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#F8F0FF,#FFF0F5);padding:6px 14px 6px 6px;border-radius:22px;box-shadow:0 2px 8px rgba(139,108,193,0.08);border:1px solid rgba(139,108,193,0.1)">';
     h += '<div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#FFE0EC,#E8DEFF);display:flex;align-items:center;justify-content:center;font-size:20px;overflow:hidden">';
     if (icon) {
-      h += '<img src="' + icon + '" style="width:70%;height:70%;object-fit:contain" onerror="this.replaceWith(document.createTextNode(\'' + emoji + '\'))">';
+      h += '<img src="' + icon + '" style="width:100%;height:100%;object-fit:contain" onerror="this.replaceWith(document.createTextNode(\'' + emoji + '\'))">';
     } else {
       h += emoji;
     }
@@ -890,7 +890,7 @@ function updateMoreProfile(){
       if(mbti) parts.push(mbti);
       if(ilju) parts.push(ilju);
       if(tag) parts.push('#'+tag);
-      if(icon) emojiEl.innerHTML='<img src="'+icon+'" style="width:70%;height:70%;object-fit:contain" onerror="this.parentNode.textContent=\'🌟\'">'; else emojiEl.textContent='🌟';
+      if(icon) emojiEl.innerHTML='<img src="'+icon+'" style="width:100%;height:100%;object-fit:contain" onerror="this.parentNode.textContent=\'🌟\'">'; else emojiEl.textContent='🌟';
       infoEl.textContent=parts.length>0?parts.join(' · '):'분석하면 여기에 표시돼요';
     }
   }catch(e){console.warn('[MBTS] 프로필 업데이트 실패:',e);}
@@ -1216,7 +1216,7 @@ function renderSaveCards(){
     var extraStyle=(idx>=3)?'display:none;':'';
     html+='<div class="animal-card'+extraClass+'" data-record-id="'+rec.id+'" onclick="openHistoryRecord(\''+rec.id+'\')" style="'+extraStyle+'--card-glow:'+glow+'">';
     html+='<div class="animal-card-top">';
-    html+='<div class="animal-emoji-box" style="background:linear-gradient(135deg,'+bg1+')">'+(icon?'<img src="'+icon+'" style="width:70%;height:70%;object-fit:contain" onerror="this.replaceWith(document.createTextNode(\'🌟\'))">':'🌟')+'</div>';
+    html+='<div class="animal-emoji-box" style="background:linear-gradient(135deg,'+bg1+')">'+(icon?'<img src="'+icon+'" style="width:100%;height:100%;object-fit:contain" onerror="this.replaceWith(document.createTextNode(\'🌟\'))">':'🌟')+'</div>';
     html+='<div class="animal-info">';
     var isTarget=(rec.id===currentTarget);
     var starBadge=isTarget?' <span class="saju-star" style="color:var(--purple);font-size:13px;" title="더 알아보기 대상">⭐</span>':'';
@@ -1293,10 +1293,10 @@ function renderGhHistoryCards(){
     html+='<button class="gh-del-btn" onclick="event.stopPropagation();confirmDelGhHistory(this,\''+rec.id+'\')">지우기</button>';
     html+='<div class="gh-pair">';
     var _ghIconA=resolveGhPersonIcon(pA);
-    html+='<div class="gh-pair-unit"><div class="gh-pair-animal" style="background:linear-gradient(135deg,#E8DEFF,#F0E6FF)">'+(_ghIconA?'<img src="'+_ghIconA+'" style="width:70%;height:70%;object-fit:contain" onerror="this.replaceWith(document.createTextNode(\'👤\'))">':'👤')+'</div><div class="gh-pair-name" data-side="a">'+(pA.name||'?')+'</div></div>';
+    html+='<div class="gh-pair-unit"><div class="gh-pair-animal" style="background:linear-gradient(135deg,#E8DEFF,#F0E6FF)">'+(_ghIconA?'<img src="'+_ghIconA+'" style="width:100%;height:100%;object-fit:contain" onerror="this.replaceWith(document.createTextNode(\'👤\'))">':'👤')+'</div><div class="gh-pair-name" data-side="a">'+(pA.name||'?')+'</div></div>';
     html+='<div class="gh-pair-heart">💕</div>';
     var _ghIconB=resolveGhPersonIcon(pB);
-    html+='<div class="gh-pair-unit"><div class="gh-pair-animal" style="background:linear-gradient(135deg,#FFE4E8,#FFF0F3)">'+(_ghIconB?'<img src="'+_ghIconB+'" style="width:70%;height:70%;object-fit:contain" onerror="this.replaceWith(document.createTextNode(\'👤\'))">':'👤')+'</div><div class="gh-pair-name" data-side="b">'+(pB.name||'?')+'</div></div>';
+    html+='<div class="gh-pair-unit"><div class="gh-pair-animal" style="background:linear-gradient(135deg,#FFE4E8,#FFF0F3)">'+(_ghIconB?'<img src="'+_ghIconB+'" style="width:100%;height:100%;object-fit:contain" onerror="this.replaceWith(document.createTextNode(\'👤\'))">':'👤')+'</div><div class="gh-pair-name" data-side="b">'+(pB.name||'?')+'</div></div>';
     html+='<div class="gh-pair-rel-badge">'+relLabel+' 궁합</div>';
     html+='</div>';
     html+='<div class="gh-score-bar">';
@@ -1548,7 +1548,7 @@ function renderGunghapPeopleList(){
     /* personMap에도 등록 */
     personMap[rec.id]={name:name,icon:icon,tag:tag,saju:rec.saju,dw:rec.dw,gg:rec.gg,mbtiObj:rec.mbtiObj,input:rec.input||null};
     html+='<div class="mini-person" data-rec-id="'+rec.id+'" onclick="pickPersonFromHistory(this,\''+rec.id+'\')">';
-    html+='<div class="mini-emoji">'+(icon?'<img src="'+icon+'" style="width:70%;height:70%;object-fit:contain" onerror="this.replaceWith(document.createTextNode(\'🌟\'))">':'🌟')+'</div>';
+    html+='<div class="mini-emoji">'+(icon?'<img src="'+icon+'" style="width:100%;height:100%;object-fit:contain" onerror="this.replaceWith(document.createTextNode(\'🌟\'))">':'🌟')+'</div>';
     var _eName=name.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     var _eSub=sub.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     html+='<div class="mini-info"><div class="mini-name">'+_eName+'</div><div class="mini-sub">'+_eSub+'</div></div>';
@@ -2107,7 +2107,7 @@ function prefillBirthForm(){
 
   ch += '<div style="text-align:center;margin-bottom:20px">';
   ch += '<div style="width:88px;height:88px;border-radius:50%;margin:0 auto 14px;background:linear-gradient(145deg,#F3EDFF,#FFE8F0);display:flex;align-items:center;justify-content:center;font-size:46px;box-shadow:0 6px 20px rgba(139,108,193,0.12);overflow:hidden">';
-  if (icon) { ch += '<img src="' + icon + '" style="width:70%;height:70%;object-fit:contain" onerror="this.replaceWith(document.createTextNode(\'🌟\'))">'; }
+  if (icon) { ch += '<img src="' + icon + '" style="width:100%;height:100%;object-fit:contain" onerror="this.replaceWith(document.createTextNode(\'🌟\'))">'; }
   else { ch += '🌟'; }
   ch += '</div>';
   ch += '<div style="font-size:17px;font-weight:800;color:#2E1F4E;margin-bottom:4px">' + nameStr + '</div>';
@@ -5816,7 +5816,7 @@ function renderResult(result,saju,mt,gg,isAI){
   var meCard=document.querySelector('.gh-people-list .mini-person');
   if(meCard&&meCard.querySelector('.mini-name')&&meCard.querySelector('.mini-name').textContent.trim()==='나'){
     var _meEmojiEl=meCard.querySelector('.mini-emoji');
-    if(myIcon) _meEmojiEl.innerHTML='<img src="'+myIcon+'" style="width:70%;height:70%;object-fit:contain" onerror="this.parentNode.textContent=\'🌟\'">'; else _meEmojiEl.textContent='🌟';
+    if(myIcon) _meEmojiEl.innerHTML='<img src="'+myIcon+'" style="width:100%;height:100%;object-fit:contain" onerror="this.parentNode.textContent=\'🌟\'">'; else _meEmojiEl.textContent='🌟';
     var subEl=meCard.querySelector('.mini-sub');
     if(subEl) subEl.textContent=myTag+(myIlju?' · '+myIlju:'');
     meCard.onclick=function(){pickPerson(meCard,myIcon,'나',myTag);};
