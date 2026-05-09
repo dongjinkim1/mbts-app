@@ -1771,3 +1771,50 @@ button{font-family:inherit;cursor:pointer}
 .prog-bottom-pill.done .prog-dots span.filled { background: #4CAF7D; }
 
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* ===== LOGIN INTRO ANIMATION ===== */
+.login-intro{
+  display:flex;flex-direction:column;align-items:center;
+  width:100%;max-width:380px;
+}
+.login-intro-label{
+  font-size:16px;font-weight:500;letter-spacing:2.5px;color:#B0A3C8;
+  margin-bottom:12px;opacity:0;
+}
+.login-intro-line{
+  font-size:20px;font-weight:400;color:#6B5B8A;text-align:center;
+  line-height:1.8;letter-spacing:-.3px;opacity:0;
+}
+.login-intro-turn{
+  font-size:18px;font-weight:400;color:var(--purple);text-align:center;
+  margin-top:24px;opacity:0;
+}
+.login-intro-punch{
+  font-size:13px;font-weight:400;color:var(--text-3);text-align:center;
+  margin-top:16px;letter-spacing:.8px;opacity:0;
+}
+.login-intro-brand{
+  font-size:52px;font-weight:800;letter-spacing:-1px;margin-top:6px;opacity:0;
+}
+.login-intro-brand span{display:inline-block;min-width:0.6em;text-align:center}
+.login-intro-sub{
+  font-size:13px;color:var(--text-3);letter-spacing:1.5px;margin-top:6px;
+  font-weight:400;opacity:0;
+}
+.login-intro-sub em{margin:0 3px;color:var(--purple-light);font-style:normal}
+.login-intro-divider{
+  width:32px;height:1px;background:var(--purple-light);margin:28px 0;opacity:0;
+}
+.login-intro .btn-kakao{margin-top:32px;opacity:0;transform:translateY(12px)}
+.login-intro .btn-guest{margin-top:8px;opacity:0;transform:translateY(12px)}
+.li-char{
+  display:inline-block;opacity:0;transform:translateY(8px);
+  transition:opacity .35s ease,transform .35s ease;
+}
+.li-char.visible{opacity:1;transform:translateY(0)}
+.li-visible{opacity:1!important}
+.li-cursor{
+  display:inline-block;width:2px;height:20px;background:var(--purple);
+  margin-left:2px;vertical-align:middle;animation:blink .8s ease infinite;
+}
+.login-intro .intro-up{animation:up .5s ease-out forwards}
