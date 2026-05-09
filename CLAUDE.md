@@ -1,7 +1,6 @@
 # CLAUDE.md — MBTS 프로젝트 규칙
 
 ## 절대 규칙
-- engine.js 절대 수정 금지
 - saju.js 절대 수정 금지
 - 한 번에 한 파일만 수정
 - 요청하지 않은 파일 수정 금지
@@ -13,7 +12,7 @@
 
 ## 파일 구조
 - index.html: 메인 UI + 렌더링
-- engine.js: AI 프롬프트 + 스트리밍 파서 (수정 금지)
+- engine.js: AI 프롬프트 + 스트리밍 파서
 - saju.js: 사주 보강 데이터 (수정 금지)
 - service.js: 무료 동물 서비스
 - gunghap.js: 궁합 분석
