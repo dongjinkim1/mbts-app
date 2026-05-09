@@ -31,9 +31,7 @@
     ctx += '- 일주: ' + ilju + ' · 일간: ' + (s.dm || '') + '(' + (s.dmEl || '') + ')\n';
     ctx += '- MBTI: ' + (t.mbti || '미상') + '\n';
     ctx += '- 격국: ' + (g.gyeokgukName || '') + ' · 용신: ' + (g.yongshin || '') + ' [' + (g.yongshinType || '') + ']\n';
-    ctx += '- 강약: ' + (g.strengthGrade || '') + ' ' + (g.strengthScore || '') + '점';
-    ctx += ' (자기편=' + (g.selfStr != null ? g.selfStr.toFixed(1) : '?') + ' vs 상대편=' + (g.otherStr != null ? g.otherStr.toFixed(1) : '?') + ')';
-    ctx += (g.deukryeong ? ' [득령]' : ' [실령]') + '\n';
+    ctx += '- 강약: ' + (g.strengthGrade || '') + (g.deukryeong ? ' [득령]' : ' [실령]') + '\n';
     ctx += '- 사주: ' + (s.P ? s.P.map(function(p){ return p.s + p.b; }).join(' ') : '') + '\n';
     ctx += '- 오행: 목=' + (s.el ? s.el['목'] : '?') + ' 화=' + (s.el ? s.el['화'] : '?') + ' 토=' + (s.el ? s.el['토'] : '?') + ' 금=' + (s.el ? s.el['금'] : '?') + ' 수=' + (s.el ? s.el['수'] : '?') + '\n';
     ctx += '- 부족오행: ' + ((s.lackFull && s.lackFull.length > 0) ? s.lackFull.join(',') : '없음') + '\n';
@@ -63,9 +61,9 @@
       }
     }
 
-    // ③ enriched 텍스트 (로컬 재계산 — SJ_enrichSajuData)
-    var en = null;
-    if (s && g && d && typeof SJ_enrichSajuData === 'function') {
+    // ③ enriched 텍스트 (저장된 데이터 로드 — 재계산 없음)
+    var en = t.enriched || null;
+    if (!en && s && g && d && typeof SJ_enrichSajuData === 'function') {
       try { en = SJ_enrichSajuData(s, g, d, gender, t.mbti || ''); } catch(e) {}
     }
     if (en) {
@@ -116,14 +114,7 @@
       } catch(e) {}
     }
 
-    // ⑥ 사주×MBTI 교차 패턴 (로컬 재계산)
-    if (typeof buildUserTags === 'function' && typeof buildPatternPrompt === 'function') {
-      try {
-        var tags = buildUserTags(s, g, d, t.mbti || '', null);
-        var pt = buildPatternPrompt('premium', tags);
-        if (pt) ctx += '\n### 사주×MBTI 교차 패턴\n' + pt + '\n';
-      } catch(e) {}
-    }
+    // ⑥ 사주×MBTI 교차 패턴 — 채팅에서는 제외 (프리미엄 분석용 이론 43K 불필요)
 
     // ⑦ 공망 상세
     if (typeof SJ_buildGongmangFull === 'function') {
