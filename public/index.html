@@ -119,6 +119,11 @@ if (typeof Kakao !== 'undefined' && !Kakao.isInitialized()) {
   ];
   var CI=55,timers=[];
   function clr(){timers.forEach(clearTimeout);timers=[];}
+  function resetAll(){
+    ['li1','li3','li4','li7','li8','li9'].forEach(function(id){document.getElementById(id).classList.remove('intro-up');});
+    ['li2','li5','li6'].forEach(function(id){var e=document.getElementById(id);e.innerHTML='';e.classList.remove('li-visible');});
+    var k=document.getElementById('introKakao');k.style.opacity='0';k.style.transform='translateY(12px)';k.style.transition='none';
+  }
   function typeChar(el,txt,cb){
     el.innerHTML='';el.classList.add('li-visible');
     var cur=document.createElement('span');cur.className='li-cursor';el.appendChild(cur);
@@ -140,12 +145,11 @@ if (typeof Kakao !== 'undefined' && !Kakao.isInitialized()) {
   }
   function showBrand(){
     document.getElementById('li8').classList.add('intro-up');
-    timers.push(setTimeout(function(){document.getElementById('li9').classList.add('intro-up');},250));
+    timers.push(setTimeout(function(){document.getElementById('li9').classList.add('intro-up');},300));
     timers.push(setTimeout(function(){
-      var k=document.getElementById('introKakao');k.style.transition='opacity .5s ease,transform .5s ease';
+      var k=document.getElementById('introKakao');k.style.transition='opacity .6s ease,transform .6s ease';
       k.style.opacity='1';k.style.transform='translateY(0)';
-    },500));
-    timers.push(setTimeout(function(){try{localStorage.setItem('mbts_intro_seen','1');}catch(e){}},800));
+    },900));
   }
   function run(){
     var idx=0;
@@ -175,8 +179,7 @@ if (typeof Kakao !== 'undefined' && !Kakao.isInitialized()) {
   var obs=new MutationObserver(function(muts){
     muts.forEach(function(m){
       if(m.target.id==='pgLogin'&&m.target.classList.contains('active')){
-        try{var seen=localStorage.getItem('mbts_intro_seen');}catch(e){var seen=null;}
-        if(seen){showFinal();}else{timers.push(setTimeout(run,400));}
+        clr();resetAll();timers.push(setTimeout(run,400));
       }
     });
   });
