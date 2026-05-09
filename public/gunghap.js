@@ -402,7 +402,7 @@
     p += '### ═══ A (나) ═══\n';
     p += '- 사주: ' + sajuA.P.map(function(x) { return x.l + ' ' + x.s + x.b; }).join(' | ') + '\n';
     p += '- 일주: ' + sajuA.P[2].s + sajuA.P[2].b + ' · 일간: ' + sajuA.dm + '(' + sajuA.dmEl + ')\n';
-    p += '- 격국: ' + (ggA.gyeokgukName||'미분석') + ' · 강도: ' + (ggA.strengthGrade||'중화') + ' ' + (ggA.strengthScore || '') + '점\n';
+    p += '- 격국: ' + (ggA.gyeokgukName||'미분석') + ' · 강도: ' + (ggA.strengthGrade||'중화') + '\n';
     p += '- MBTI: ' + mbtiA.type + ' (' + (mbtiA.cf || '') + ', 주기능: ' + (cfN[cfAArr[0]] || cfAArr[0] || '') + ')\n';
     p += '- 오행: 목=' + sajuA.el['목'] + ' 화=' + sajuA.el['화'] + ' 토=' + sajuA.el['토'] + ' 금=' + sajuA.el['금'] + ' 수=' + sajuA.el['수'] + '\n';
 
@@ -511,7 +511,7 @@
     p += '\n### ═══ B (상대방) ═══\n';
     p += '- 사주: ' + sajuB.P.map(function(x) { return x.l + ' ' + x.s + x.b; }).join(' | ') + '\n';
     p += '- 일주: ' + sajuB.P[2].s + sajuB.P[2].b + ' · 일간: ' + sajuB.dm + '(' + sajuB.dmEl + ')\n';
-    p += '- 격국: ' + (ggB.gyeokgukName||'미분석') + ' · 강도: ' + (ggB.strengthGrade||'중화') + ' ' + (ggB.strengthScore || '') + '점\n';
+    p += '- 격국: ' + (ggB.gyeokgukName||'미분석') + ' · 강도: ' + (ggB.strengthGrade||'중화') + '\n';
     p += '- MBTI: ' + mbtiB.type + ' (' + (mbtiB.cf || '') + ', 주기능: ' + (cfN[cfBArr[0]] || cfBArr[0] || '') + ')\n';
     p += '- 오행: 목=' + sajuB.el['목'] + ' 화=' + sajuB.el['화'] + ' 토=' + sajuB.el['토'] + ' 금=' + sajuB.el['금'] + ' 수=' + sajuB.el['수'] + '\n';
 
@@ -892,8 +892,8 @@
 
     p += '\nMBTS 강약 등급\n';
     var sgA = getStrengthGrade(ggA), sgB = getStrengthGrade(ggB);
-    p += 'A: ' + sgA.label + '(' + sgA.pct + '%) — ' + sgA.desc + '\n';
-    p += 'B: ' + sgB.label + '(' + sgB.pct + '%) — ' + sgB.desc + '\n';
+    p += 'A: ' + sgA.label + ' — ' + sgA.desc + '\n';
+    p += 'B: ' + sgB.label + ' — ' + sgB.desc + '\n';
 
     p += '\nMBTS 개인 분석 A\n';
     var mbtiAInt = (mbtiA && mbtiA.axes) ? mbtiA.axes.map(function(a){return a.pct||60;}) : [60,60,60,60];
@@ -1438,6 +1438,11 @@
             }
             return match;
           });
+        }
+        // ④ 괄호 스트리핑 — (57%), (음 6, 양 2) 등 수치 표현 제거
+        txt = txt.replace(/\s*\([^)]*\)/g, '');
+        if (item.insightText) {
+          item.insightText = item.insightText.replace(/\s*\([^)]*\)/g, '');
         }
 
         // 새 구조(b)와 구 구조(content) 모두 교정 결과 반영
