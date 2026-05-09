@@ -521,7 +521,7 @@
       + 'border:1.5px solid rgba(0,0,0,0.06);border-radius:24px;'
       + 'background:#fff;outline:none;'
       + 'transition:border-color 0.2s;'
-      + 'resize:none;overflow-y:hidden;'
+      + 'resize:none;overflow-y:hidden;transition:height 0.15s ease;'
       + 'max-height:120px;line-height:1.5;'
       + 'font-family:inherit'
       + '"></textarea>';
@@ -901,6 +901,16 @@
   function hideQuickButtons() {
     var el = document.getElementById('chatQuickArea');
     if (el) el.style.display = 'none';
+  }
+
+  // ─── textarea 자동 높이 조절 (모바일+PC) ───
+  function autoResizeChatInput() {
+    var el = document.getElementById('chatInput');
+    if (!el) return;
+    el.style.height = 'auto';
+    var h = Math.min(el.scrollHeight, 120);
+    el.style.height = h + 'px';
+    el.style.overflowY = h >= 120 ? 'auto' : 'hidden';
   }
 
   // ─── 전송 버튼 상태 ───
@@ -1588,6 +1598,7 @@
   window.showModeToast = showModeToast;
   window.updateSendBtn = updateSendBtn;
   window.chatInputKeydown = chatInputKeydown;
+  window.autoResizeChatInput = autoResizeChatInput;
   window.showPersonSwitcher = showPersonSwitcher;
   window.closePersonSwitcher = closePersonSwitcher;
   window.switchChatTarget = switchChatTarget;
