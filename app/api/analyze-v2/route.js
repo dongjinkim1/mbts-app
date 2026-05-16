@@ -310,6 +310,9 @@ async function processJob(jobId, prompts, inputParams, ai) {
                 if (_end > 0) subText = subText.substring(0, _end)
                 try {
                   const subObj = JSON.parse(subText)
+                  // sanitize partial sub fields before persisting (mirrors final result.text path)
+                  if (subObj && typeof subObj.b === 'string') subObj.b = ai.sanitizeForOutput(subObj.b)
+                  if (subObj && typeof subObj.h === 'string') subObj.h = ai.sanitizeForOutput(subObj.h)
                   detectedSubs.push(subObj)
                   // queue partial update (serialized) to avoid races with final upsert
                   const snapshot = detectedSubs.slice()
