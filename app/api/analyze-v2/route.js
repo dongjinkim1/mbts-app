@@ -340,6 +340,25 @@ async function processJob(jobId, prompts, inputParams, ai) {
 
     console.log('[analyze-v2] Claude done:', fullText.length, 'chars, subs detected:', detectedSubs.length)
 
+    // 서버 후처리: AI 응답에서 한자/음양비율 표현 제거 (engine.js READ-ONLY 대응)
+    try {
+      const parsed = JSON.parse(fullText)
+      if (parsed && parsed.categories) {
+        const HANZI = /[一-鿿]/g
+        const YIN_YANG = /음\s*\d+\s*[·:]\s*양\s*\d+/g
+        const sanitize = (str) => typeof str === 'string'
+          ? str.replace(HANZI, '').replace(YIN_YANG, '')
+          : str
+        parsed.categories.forEach((cat) => {
+          (cat.subs || []).forEach((sub) => {
+            if (sub.b) sub.b = sanitize(sub.b)
+            if (sub.insightText) sub.insightText = sanitize(sub.insightText)
+          })
+        })
+        fullText = JSON.stringify(parsed)
+      }
+    } catch (_e) { /* 미완성 JSON — 후처리 스킵 */ }
+
     const isComplete = ai.isValidJSON(fullText)
     await supabase.from('analysis_jobs').upsert({
       id: jobId,
