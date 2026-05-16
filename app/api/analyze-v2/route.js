@@ -4,7 +4,7 @@ import { getServiceSupabase } from '@/lib/supabase'
 import { waitUntil } from '@vercel/functions'
 import { logError } from '@/lib/errorLog'
 
-export const maxDuration = 300
+export const maxDuration = 800
 
 const client = new Anthropic()
 const MODEL = 'claude-opus-4-6'
@@ -249,7 +249,7 @@ async function processJob(jobId, prompts, inputParams, ai) {
 
     console.log('[analyze-v2] calling Claude API for job:', jobId)
 
-    const SUB_TITLES = ["나의 성격","나의 장점","고쳐야 할 점","남들이 보는 나","연애 스타일","잘 맞는 타입","연애 지뢰","직장 적성","맞춤 재물 쌓는 법","올해 키워드","올해 조언","대운 흐름","기회의 시기","인생 한줄 마무리"]
+    const SUB_TITLES = ["나의 성격","나의 장점","고쳐야 할 점","남들이 보는 나","연애 스타일","잘 맞는 타입","연애 지뢰","직장 적성","맞춤 재물 쌓는 법","대운 흐름","기회의 시기","인생 한줄 마무리"]
 
     const stream = client.messages.stream({
       model: MODEL,
