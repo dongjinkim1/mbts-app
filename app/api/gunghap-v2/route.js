@@ -304,6 +304,9 @@ async function processJob(jobId, prompts, inputParams, ai, gp) {
       .map(b => b.text)
       .join('')
 
+    // 서버 후처리: 한자/음양비율 strip (engine.js READ-ONLY 대응)
+    fullText = ai.sanitizeForOutput(fullText)
+
     console.log('[gunghap-v2] Claude done:', fullText.length, 'chars, subs detected:', detectedSubs.length)
 
     // ── 마지막 sub catchup: 전체 JSON에서 모든 subs 추출하여 partial_subs 갱신 ──
