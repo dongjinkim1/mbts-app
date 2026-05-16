@@ -310,9 +310,6 @@ async function processJob(jobId, prompts, inputParams, ai) {
                 if (_end > 0) subText = subText.substring(0, _end)
                 try {
                   const subObj = JSON.parse(subText)
-                  // sanitize partial sub fields before persisting (mirrors final result.text path)
-                  if (subObj && typeof subObj.b === 'string') subObj.b = ai.sanitizeForOutput(subObj.b)
-                  if (subObj && typeof subObj.h === 'string') subObj.h = ai.sanitizeForOutput(subObj.h)
                   detectedSubs.push(subObj)
                   // queue partial update (serialized) to avoid races with final upsert
                   const snapshot = detectedSubs.slice()
@@ -342,9 +339,6 @@ async function processJob(jobId, prompts, inputParams, ai) {
       .join('')
 
     console.log('[analyze-v2] Claude done:', fullText.length, 'chars, subs detected:', detectedSubs.length)
-
-    // 서버 후처리: AI 응답에서 한자/음양비율 표현 제거 (engine.js READ-ONLY 대응)
-    fullText = ai.sanitizeForOutput(fullText)
 
     const isComplete = ai.isValidJSON(fullText)
     await supabase.from('analysis_jobs').upsert({
