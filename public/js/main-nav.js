@@ -1566,7 +1566,7 @@ function fillSlot(slotId,data,style){
   slot.className='gh-slot '+style;
   var em=data.emoji||'';
   var iconHtml=(em.indexOf('/')===0)
-    ? '<img src="'+em+'" style="width:70%;height:70%;object-fit:contain" onerror="this.replaceWith(document.createTextNode(\'👤\'))">'
+    ? '<img src="'+em+'" style="width:48px;height:48px;object-fit:contain" onerror="this.outerHTML=\'👤\'">'
     : em;
   slot.innerHTML='<div class="gh-slot-emoji">'+iconHtml+'</div><div class="gh-slot-name">'+data.name+'</div><div class="gh-slot-tag">'+data.tag+'</div>';
 }
