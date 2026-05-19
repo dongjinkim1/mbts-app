@@ -4,10 +4,10 @@ import { getServiceSupabase } from '@/lib/supabase'
 import { waitUntil } from '@vercel/functions'
 import { logError } from '@/lib/errorLog'
 
-export const maxDuration = 300
+export const maxDuration = 800
 
 const client = new Anthropic()
-const MODEL = 'claude-sonnet-4-6'
+const MODEL = 'claude-opus-4-6'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
