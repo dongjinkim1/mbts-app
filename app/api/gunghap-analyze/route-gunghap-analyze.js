@@ -1,5 +1,5 @@
 export const runtime = 'nodejs';
-export const maxDuration = 120;
+export const maxDuration = 800;
 
 export async function POST(request) {
   try {
@@ -28,7 +28,7 @@ export async function POST(request) {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
+        model: 'claude-opus-4-6',
         max_tokens: 8192,
         stream: true,
         system: systemPrompt,
