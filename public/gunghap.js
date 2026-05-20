@@ -963,7 +963,9 @@
   window.ghPickRel=function(type){GH_REL=type;['ssom','lover','colleague','friend'].forEach(function(t){var b=document.getElementById('gh-rel-'+t);if(b){b.style.background=(t===type)?'rgba(136,97,154,0.08)':'#fff';b.style.color=(t===type)?'var(--accent)':'var(--text-muted)';b.style.borderColor=(t===type)?'var(--accent)':'var(--border-light)';}});if(typeof checkGHReady==='function')checkGHReady();};
   var _origCGR=window.checkGHReady;window.checkGHReady=function(){if(typeof _origCGR==='function')_origCGR();if(!GH_REL){var b=document.getElementById('btn-gh-start');if(b){b.disabled=true;b.style.background='rgba(0,0,0,0.08)';b.style.color='var(--text-muted)';}}};
   // ══════════════════════════════════════════════════
-  // ★ 궁합 시스템 프롬프트 V2 — lib/gunghap-prompt.js 와 동기화 (디버깅용)
+  // ★ 궁합 시스템 프롬프트 V2 — lib/gunghap-prompt.js와 자동 동기화
+  // ⚠️ 이 블록은 scripts/sync-public-prompts.js가 매 빌드마다 재생성합니다.
+  //    직접 수정 금지. 변경하려면 lib/gunghap-prompt.js를 수정하고 npm run build.
   // ══════════════════════════════════════════════════
 
   var GUNGHAP_SYSTEM_V2 = `당신은 대한민국 최정상급 MBTS(사주 × MBTI) 전문가입니다.
@@ -1108,170 +1110,160 @@ b: 3~5문단, 각 3~5문장. \\
 JSON만 출력하세요.`;
 
   var GH_REL_CONFIG = {
-    ssom: {
-      title: '썸',
-      subtitle: '이 사람... 나 어떻게 생각해?',
-      subs: [
-        { h: '이 사람의 성격', tone: '시적이고 감성적. 물상 비유 활용.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '이 사람의 연애 스타일', tone: '설레는 톤. 로맨틱.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '이 사람이 좋아하는 타입', tone: '구체적이고 실용적. 명확하게.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '이 사람이 싫어하는 타입', tone: '걱정해주는 톤. 직설적.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '상대 눈에 비친 나', tone: '호기심 자극하는 톤.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '우리 사이의 끌림', tone: '설레는 톤. 확신.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '서로 맞춰가야 할 부분', tone: '솔직하고 직설적. 따뜻한 조언.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '통하는 접근법', tone: '실용적 코칭. 자신감.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '역효과 나는 행동', tone: '걱정해주는 톤. 직설적.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '이 사람과 사귀려면', tone: '현실적이고 전략적.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '사귀면 어떤 커플이 되는지', tone: '따뜻한 상상. 기대감.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '한 줄 요약', tone: '가장 시적. 여운 남게. 감동적.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' }
-      ]
-    },
-    lover: {
-      title: '연인',
-      subtitle: '이 사람이랑 쭉 가도 될까?',
-      subs: [
-        { h: '이 사람의 성격', tone: '시적이고 감성적. 물상 비유 활용.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '이 사람의 연애 스타일', tone: '따뜻하고 로맨틱.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '이 사람이 연인에게 바라는 것', tone: '공감하는 톤. 따뜻하게.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '이 사람이 연인에게 민감한 부분', tone: '걱정해주는 톤. 직설적.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '상대 눈에 비친 나', tone: '호기심 자극하는 톤.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '잘 맞는 부분', tone: '자신감 불어넣기. 확신 톤.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '서로 맞춰가야 할 부분', tone: '솔직하고 직설적. 따뜻한 조언.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '싸웠을 때 화해법', tone: '실용적 코칭. 따뜻하게.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '우리에게 맞는 소통법', tone: '실용적 코칭. 따뜻하게.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '결혼하면 어떤 부부가 되는지', tone: '현실적이고 전략적.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '결혼까지 가려면', tone: '따뜻한 상상. 기대감.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '한 줄 요약', tone: '가장 시적. 여운 남게. 감동적.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' }
-      ]
-    },
-    colleague: {
-      title: '직장 동료',
-      subtitle: '이 사람이랑 어떻게 일해야 할까',
-      subs: [
-        { h: '이 사람의 성격', tone: '시적이고 감성적. 물상 비유 활용.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '이 사람의 업무 스타일', tone: '관찰자 톤. 담백하게.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '이 사람이 선호하는 업무 방식', tone: '코칭 톤. 실용적.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '이 사람이 싫어하는 업무 방식', tone: '걱정해주는 톤. 직설적.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '상대 눈에 비친 나', tone: '호기심 자극하는 톤.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '같이 일할 때 시너지', tone: '자신감 불어넣기. 확신 톤.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '같이 일할 때 맞춰가야 할 부분', tone: '솔직하고 직설적. 따뜻한 조언.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '이 사람과 대화할 때 팁', tone: '실용적 코칭. 담백하게.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '이 사람에게 인정받는 법', tone: '차분하고 객관적.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '트러블 났을 때 대처법', tone: '차분하고 객관적.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '이 사람과 같이 성장하려면', tone: '큰 그림. 희망적.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '한 줄 요약', tone: '가장 시적. 여운 남게. 감동적.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' }
-      ]
-    },
-    friend: {
-      title: '친구',
-      subtitle: '우리 진짜 친한 거 맞지?',
-      subs: [
-        { h: '이 사람의 성격', tone: '시적이고 감성적. 물상 비유 활용.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '이 사람의 우정 스타일', tone: '따뜻한 관찰. 담백하게.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '이 사람이 친구에게 바라는 것', tone: '공감하는 톤. 따뜻하게.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '이 사람이 친구에게 서운해하는 것', tone: '걱정해주는 톤. 직설적.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '상대 눈에 비친 나', tone: '호기심 자극하는 톤.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '잘 맞는 부분', tone: '자신감 불어넣기. 확신 톤.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '서로 맞춰가야 할 부분', tone: '솔직하고 직설적. 따뜻한 조언.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '이 사람의 감정 표현 방식', tone: '감성적 관찰. 따뜻하게.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '이 사람과 같이 하면 잘 되는 것', tone: '따뜻한 코칭.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '멀어졌을 때 회복법', tone: '따뜻한 코칭.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '이 사람과 같이 성장하려면', tone: '큰 그림. 희망적.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' },
-        { h: '한 줄 요약', tone: '가장 시적. 여운 남게. 감동적.', anchor: '해당 소주제 패턴 섹션에서 4개 선택' }
-      ]
-    }
-  };
+  ssom: {
+    title: '\uC378',
+    subtitle: '\uC774 \uC0AC\uB78C... \uB098 \uC5B4\uB5BB\uAC8C \uC0DD\uAC01\uD574?',
+    subs: [
+      { h: '\uC774 \uC0AC\uB78C\uC758 \uC131\uACA9', tone: '\uC2DC\uC801\uC774\uACE0 \uAC10\uC131\uC801. \uBB3C\uC0C1 \uBE44\uC720 \uD65C\uC6A9.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC774 \uC0AC\uB78C\uC758 \uC5F0\uC560 \uC2A4\uD0C0\uC77C', tone: '\uC124\uB808\uB294 \uD1A4. \uB85C\uB9E8\uD2F1.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC774 \uC0AC\uB78C\uC774 \uC88B\uC544\uD558\uB294 \uD0C0\uC785', tone: '\uAD6C\uCCB4\uC801\uC774\uACE0 \uC2E4\uC6A9\uC801. \uBA85\uD655\uD558\uAC8C.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC774 \uC0AC\uB78C\uC774 \uC2EB\uC5B4\uD558\uB294 \uD0C0\uC785', tone: '\uAC71\uC815\uD574\uC8FC\uB294 \uD1A4. \uC9C1\uC124\uC801.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC0C1\uB300 \uB208\uC5D0 \uBE44\uCE5C \uB098', tone: '\uD638\uAE30\uC2EC \uC790\uADF9\uD558\uB294 \uD1A4.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC6B0\uB9AC \uC0AC\uC774\uC758 \uB04C\uB9BC', tone: '\uC124\uB808\uB294 \uD1A4. \uD655\uC2E0.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC11C\uB85C \uB9DE\uCDB0\uAC00\uC57C \uD560 \uBD80\uBD84', tone: '\uC194\uC9C1\uD558\uACE0 \uC9C1\uC124\uC801. \uB530\uB73B\uD55C \uC870\uC5B8.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uD1B5\uD558\uB294 \uC811\uADFC\uBC95', tone: '\uC2E4\uC6A9\uC801 \uCF54\uCE6D. \uC790\uC2E0\uAC10.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC5ED\uD6A8\uACFC \uB098\uB294 \uD589\uB3D9', tone: '\uAC71\uC815\uD574\uC8FC\uB294 \uD1A4. \uC9C1\uC124\uC801.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC774 \uC0AC\uB78C\uACFC \uC0AC\uADC0\uB824\uBA74', tone: '\uD604\uC2E4\uC801\uC774\uACE0 \uC804\uB7B5\uC801.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC0AC\uADC0\uBA74 \uC5B4\uB5A4 \uCEE4\uD50C\uC774 \uB418\uB294\uC9C0', tone: '\uB530\uB73B\uD55C \uC0C1\uC0C1. \uAE30\uB300\uAC10.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uD55C \uC904 \uC694\uC57D', tone: '\uAC00\uC7A5 \uC2DC\uC801. \uC5EC\uC6B4 \uB0A8\uAC8C. \uAC10\uB3D9\uC801.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' }
+    ]
+  },
+  lover: {
+    title: '\uC5F0\uC778',
+    subtitle: '\uC774 \uC0AC\uB78C\uC774\uB791 \uCABD \uAC00\uB3C4 \uB420\uAE4C?',
+    subs: [
+      { h: '\uC774 \uC0AC\uB78C\uC758 \uC131\uACA9', tone: '\uC2DC\uC801\uC774\uACE0 \uAC10\uC131\uC801. \uBB3C\uC0C1 \uBE44\uC720 \uD65C\uC6A9.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC774 \uC0AC\uB78C\uC758 \uC5F0\uC560 \uC2A4\uD0C0\uC77C', tone: '\uB530\uB73B\uD558\uACE0 \uB85C\uB9E8\uD2F1.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC774 \uC0AC\uB78C\uC774 \uC5F0\uC778\uC5D0\uAC8C \uBC14\uB77C\uB294 \uAC83', tone: '\uACF5\uAC10\uD558\uB294 \uD1A4. \uB530\uB73B\uD558\uAC8C.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC774 \uC0AC\uB78C\uC774 \uC5F0\uC778\uC5D0\uAC8C \uBBFC\uAC10\uD55C \uBD80\uBD84', tone: '\uAC71\uC815\uD574\uC8FC\uB294 \uD1A4. \uC9C1\uC124\uC801.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC0C1\uB300 \uB208\uC5D0 \uBE44\uCE5C \uB098', tone: '\uD638\uAE30\uC2EC \uC790\uADF9\uD558\uB294 \uD1A4.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC798 \uB9DE\uB294 \uBD80\uBD84', tone: '\uC790\uC2E0\uAC10 \uBD88\uC5B4\uB123\uAE30. \uD655\uC2E0 \uD1A4.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC11C\uB85C \uB9DE\uCDB0\uAC00\uC57C \uD560 \uBD80\uBD84', tone: '\uC194\uC9C1\uD558\uACE0 \uC9C1\uC124\uC801. \uB530\uB73B\uD55C \uC870\uC5B8.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC2F8\uC6E0\uC744 \uB54C \uD654\uD574\uBC95', tone: '\uC2E4\uC6A9\uC801 \uCF54\uCE6D. \uB530\uB73B\uD558\uAC8C.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC6B0\uB9AC\uC5D0\uAC8C \uB9DE\uB294 \uC18C\uD1B5\uBC95', tone: '\uC2E4\uC6A9\uC801 \uCF54\uCE6D. \uB530\uB73B\uD558\uAC8C.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uACB0\uD63C\uD558\uBA74 \uC5B4\uB5A4 \uBD80\uBD80\uAC00 \uB418\uB294\uC9C0', tone: '\uD604\uC2E4\uC801\uC774\uACE0 \uC804\uB7B5\uC801.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uACB0\uD63C\uAE4C\uC9C0 \uAC00\uB824\uBA74', tone: '\uB530\uB73B\uD55C \uC0C1\uC0C1. \uAE30\uB300\uAC10.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uD55C \uC904 \uC694\uC57D', tone: '\uAC00\uC7A5 \uC2DC\uC801. \uC5EC\uC6B4 \uB0A8\uAC8C. \uAC10\uB3D9\uC801.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' }
+    ]
+  },
+  colleague: {
+    title: '\uC9C1\uC7A5 \uB3D9\uB8CC',
+    subtitle: '\uC774 \uC0AC\uB78C\uC774\uB791 \uC5B4\uB5BB\uAC8C \uC77C\uD574\uC57C \uD560\uAE4C',
+    subs: [
+      { h: '\uC774 \uC0AC\uB78C\uC758 \uC131\uACA9', tone: '\uC2DC\uC801\uC774\uACE0 \uAC10\uC131\uC801. \uBB3C\uC0C1 \uBE44\uC720 \uD65C\uC6A9.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC774 \uC0AC\uB78C\uC758 \uC5C5\uBB34 \uC2A4\uD0C0\uC77C', tone: '\uAD00\uCC30\uC790 \uD1A4. \uB2F4\uBC31\uD558\uAC8C.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC774 \uC0AC\uB78C\uC774 \uC120\uD638\uD558\uB294 \uC5C5\uBB34 \uBC29\uC2DD', tone: '\uCF54\uCE6D \uD1A4. \uC2E4\uC6A9\uC801.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC774 \uC0AC\uB78C\uC774 \uC2EB\uC5B4\uD558\uB294 \uC5C5\uBB34 \uBC29\uC2DD', tone: '\uAC71\uC815\uD574\uC8FC\uB294 \uD1A4. \uC9C1\uC124\uC801.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC0C1\uB300 \uB208\uC5D0 \uBE44\uCE5C \uB098', tone: '\uD638\uAE30\uC2EC \uC790\uADF9\uD558\uB294 \uD1A4.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uAC19\uC774 \uC77C\uD560 \uB54C \uC2DC\uB108\uC9C0', tone: '\uC790\uC2E0\uAC10 \uBD88\uC5B4\uB123\uAE30. \uD655\uC2E0 \uD1A4.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uAC19\uC774 \uC77C\uD560 \uB54C \uB9DE\uCDB0\uAC00\uC57C \uD560 \uBD80\uBD84', tone: '\uC194\uC9C1\uD558\uACE0 \uC9C1\uC124\uC801. \uB530\uB73B\uD55C \uC870\uC5B8.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC774 \uC0AC\uB78C\uACFC \uB300\uD654\uD560 \uB54C \uD301', tone: '\uC2E4\uC6A9\uC801 \uCF54\uCE6D. \uB2F4\uBC31\uD558\uAC8C.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC774 \uC0AC\uB78C\uC5D0\uAC8C \uC778\uC815\uBC1B\uB294 \uBC95', tone: '\uCC28\uBD84\uD558\uACE0 \uAC1D\uAD00\uC801.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uD2B8\uB7EC\uBE14 \uB0AC\uC744 \uB54C \uB300\uCC98\uBC95', tone: '\uCC28\uBD84\uD558\uACE0 \uAC1D\uAD00\uC801.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC774 \uC0AC\uB78C\uACFC \uAC19\uC774 \uC131\uC7A5\uD558\uB824\uBA74', tone: '\uD070 \uADF8\uB9BC. \uD76C\uB9DD\uC801.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uD55C \uC904 \uC694\uC57D', tone: '\uAC00\uC7A5 \uC2DC\uC801. \uC5EC\uC6B4 \uB0A8\uAC8C. \uAC10\uB3D9\uC801.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' }
+    ]
+  },
+  friend: {
+    title: '\uCE5C\uAD6C',
+    subtitle: '\uC6B0\uB9AC \uC9C4\uC9DC \uCE5C\uD55C \uAC70 \uB9DE\uC9C0?',
+    subs: [
+      { h: '\uC774 \uC0AC\uB78C\uC758 \uC131\uACA9', tone: '\uC2DC\uC801\uC774\uACE0 \uAC10\uC131\uC801. \uBB3C\uC0C1 \uBE44\uC720 \uD65C\uC6A9.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC774 \uC0AC\uB78C\uC758 \uC6B0\uC815 \uC2A4\uD0C0\uC77C', tone: '\uB530\uB73B\uD55C \uAD00\uCC30. \uB2F4\uBC31\uD558\uAC8C.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC774 \uC0AC\uB78C\uC774 \uCE5C\uAD6C\uC5D0\uAC8C \uBC14\uB77C\uB294 \uAC83', tone: '\uACF5\uAC10\uD558\uB294 \uD1A4. \uB530\uB73B\uD558\uAC8C.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC774 \uC0AC\uB78C\uC774 \uCE5C\uAD6C\uC5D0\uAC8C \uC11C\uC6B4\uD574\uD558\uB294 \uAC83', tone: '\uAC71\uC815\uD574\uC8FC\uB294 \uD1A4. \uC9C1\uC124\uC801.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC0C1\uB300 \uB208\uC5D0 \uBE44\uCE5C \uB098', tone: '\uD638\uAE30\uC2EC \uC790\uADF9\uD558\uB294 \uD1A4.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC798 \uB9DE\uB294 \uBD80\uBD84', tone: '\uC790\uC2E0\uAC10 \uBD88\uC5B4\uB123\uAE30. \uD655\uC2E0 \uD1A4.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC11C\uB85C \uB9DE\uCDB0\uAC00\uC57C \uD560 \uBD80\uBD84', tone: '\uC194\uC9C1\uD558\uACE0 \uC9C1\uC124\uC801. \uB530\uB73B\uD55C \uC870\uC5B8.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC774 \uC0AC\uB78C\uC758 \uAC10\uC815 \uD45C\uD604 \uBC29\uC2DD', tone: '\uAC10\uC131\uC801 \uAD00\uCC30. \uB530\uB73B\uD558\uAC8C.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC774 \uC0AC\uB78C\uACFC \uAC19\uC774 \uD558\uBA74 \uC798 \uB418\uB294 \uAC83', tone: '\uB530\uB73B\uD55C \uCF54\uCE6D.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uBA40\uC5B4\uC84C\uC744 \uB54C \uD68C\uBCF5\uBC95', tone: '\uB530\uB73B\uD55C \uCF54\uCE6D.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uC774 \uC0AC\uB78C\uACFC \uAC19\uC774 \uC131\uC7A5\uD558\uB824\uBA74', tone: '\uD070 \uADF8\uB9BC. \uD76C\uB9DD\uC801.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' },
+      { h: '\uD55C \uC904 \uC694\uC57D', tone: '\uAC00\uC7A5 \uC2DC\uC801. \uC5EC\uC6B4 \uB0A8\uAC8C. \uAC10\uB3D9\uC801.', anchor: '\uD574\uB2F9 \uC18C\uC8FC\uC81C \uD328\uD134 \uC139\uC158\uC5D0\uC11C 4\uAC1C \uC120\uD0DD' }
+    ]
+  }
+};
   window.GH_REL_CONFIG = GH_REL_CONFIG;
 
-  // ── 소주제별 톤 룩업 (lib/gunghap-prompt.js의 GH_SUB_TONE과 동기화) ──
   var GH_SUB_TONE = {
-    ssom: {
-      '이 사람의 성격': '시적이고 감성적. 물상 비유 활용.',
-      '이 사람의 연애 스타일': '설레는 톤. 로맨틱.',
-      '이 사람이 좋아하는 타입': '구체적이고 실용적. 명확하게.',
-      '이 사람이 싫어하는 타입': '걱정해주는 톤. 직설적.',
-      '상대 눈에 비친 나': '호기심 자극하는 톤.',
-      '우리 사이의 끌림': '설레는 톤. 확신.',
-      '서로 맞춰가야 할 부분': '솔직하고 직설적. 따뜻한 조언.',
-      '통하는 접근법': '실용적 코칭. 자신감.',
-      '역효과 나는 행동': '걱정해주는 톤. 직설적.',
-      '이 사람과 사귀려면': '현실적이고 전략적.',
-      '사귀면 어떤 커플이 되는지': '따뜻한 상상. 기대감.',
-      '한 줄 요약': '가장 시적. 여운 남게. 감동적.'
-    },
-    lover: {
-      '이 사람의 성격': '시적이고 감성적. 물상 비유 활용.',
-      '이 사람의 연애 스타일': '따뜻하고 로맨틱.',
-      '이 사람이 연인에게 바라는 것': '공감하는 톤. 따뜻하게.',
-      '이 사람이 연인에게 민감한 부분': '걱정해주는 톤. 직설적.',
-      '상대 눈에 비친 나': '호기심 자극하는 톤.',
-      '잘 맞는 부분': '자신감 불어넣기. 확신 톤.',
-      '서로 맞춰가야 할 부분': '솔직하고 직설적. 따뜻한 조언.',
-      '싸웠을 때 화해법': '실용적 코칭. 따뜻하게.',
-      '우리에게 맞는 소통법': '실용적 코칭. 따뜻하게.',
-      '결혼하면 어떤 부부가 되는지': '현실적이고 전략적.',
-      '결혼까지 가려면': '따뜻한 상상. 기대감.',
-      '한 줄 요약': '가장 시적. 여운 남게. 감동적.'
-    },
-    colleague: {
-      '이 사람의 성격': '시적이고 감성적. 물상 비유 활용.',
-      '이 사람의 업무 스타일': '관찰자 톤. 담백하게.',
-      '이 사람이 선호하는 업무 방식': '코칭 톤. 실용적.',
-      '이 사람이 싫어하는 업무 방식': '걱정해주는 톤. 직설적.',
-      '상대 눈에 비친 나': '호기심 자극하는 톤.',
-      '같이 일할 때 시너지': '자신감 불어넣기. 확신 톤.',
-      '같이 일할 때 맞춰가야 할 부분': '솔직하고 직설적. 따뜻한 조언.',
-      '이 사람과 대화할 때 팁': '실용적 코칭. 담백하게.',
-      '이 사람에게 인정받는 법': '차분하고 객관적.',
-      '트러블 났을 때 대처법': '차분하고 객관적.',
-      '이 사람과 같이 성장하려면': '큰 그림. 희망적.',
-      '한 줄 요약': '가장 시적. 여운 남게. 감동적.'
-    },
-    friend: {
-      '이 사람의 성격': '시적이고 감성적. 물상 비유 활용.',
-      '이 사람의 우정 스타일': '따뜻한 관찰. 담백하게.',
-      '이 사람이 친구에게 바라는 것': '공감하는 톤. 따뜻하게.',
-      '이 사람이 친구에게 서운해하는 것': '걱정해주는 톤. 직설적.',
-      '상대 눈에 비친 나': '호기심 자극하는 톤.',
-      '잘 맞는 부분': '자신감 불어넣기. 확신 톤.',
-      '서로 맞춰가야 할 부분': '솔직하고 직설적. 따뜻한 조언.',
-      '이 사람의 감정 표현 방식': '감성적 관찰. 따뜻하게.',
-      '이 사람과 같이 하면 잘 되는 것': '따뜻한 코칭.',
-      '멀어졌을 때 회복법': '따뜻한 코칭.',
-      '이 사람과 같이 성장하려면': '큰 그림. 희망적.',
-      '한 줄 요약': '가장 시적. 여운 남게. 감동적.'
-    }
-  };
+  ssom: {
+    '이 사람의 성격': '시적이고 감성적. 물상 비유 활용.',
+    '이 사람의 연애 스타일': '설레는 톤. 로맨틱.',
+    '이 사람이 좋아하는 타입': '구체적이고 실용적. 명확하게.',
+    '이 사람이 싫어하는 타입': '걱정해주는 톤. 직설적.',
+    '상대 눈에 비친 나': '호기심 자극하는 톤.',
+    '우리 사이의 끌림': '설레는 톤. 확신.',
+    '서로 맞춰가야 할 부분': '솔직하고 직설적. 따뜻한 조언.',
+    '통하는 접근법': '실용적 코칭. 자신감.',
+    '역효과 나는 행동': '걱정해주는 톤. 직설적.',
+    '이 사람과 사귀려면': '현실적이고 전략적.',
+    '사귀면 어떤 커플이 되는지': '따뜻한 상상. 기대감.',
+    '한 줄 요약': '가장 시적. 여운 남게. 감동적.'
+  },
+  lover: {
+    '이 사람의 성격': '시적이고 감성적. 물상 비유 활용.',
+    '이 사람의 연애 스타일': '따뜻하고 로맨틱.',
+    '이 사람이 연인에게 바라는 것': '공감하는 톤. 따뜻하게.',
+    '이 사람이 연인에게 민감한 부분': '걱정해주는 톤. 직설적.',
+    '상대 눈에 비친 나': '호기심 자극하는 톤.',
+    '잘 맞는 부분': '자신감 불어넣기. 확신 톤.',
+    '서로 맞춰가야 할 부분': '솔직하고 직설적. 따뜻한 조언.',
+    '싸웠을 때 화해법': '실용적 코칭. 따뜻하게.',
+    '우리에게 맞는 소통법': '실용적 코칭. 따뜻하게.',
+    '결혼하면 어떤 부부가 되는지': '현실적이고 전략적.',
+    '결혼까지 가려면': '따뜻한 상상. 기대감.',
+    '한 줄 요약': '가장 시적. 여운 남게. 감동적.'
+  },
+  colleague: {
+    '이 사람의 성격': '시적이고 감성적. 물상 비유 활용.',
+    '이 사람의 업무 스타일': '관찰자 톤. 담백하게.',
+    '이 사람이 선호하는 업무 방식': '코칭 톤. 실용적.',
+    '이 사람이 싫어하는 업무 방식': '걱정해주는 톤. 직설적.',
+    '상대 눈에 비친 나': '호기심 자극하는 톤.',
+    '같이 일할 때 시너지': '자신감 불어넣기. 확신 톤.',
+    '같이 일할 때 맞춰가야 할 부분': '솔직하고 직설적. 따뜻한 조언.',
+    '이 사람과 대화할 때 팁': '실용적 코칭. 담백하게.',
+    '이 사람에게 인정받는 법': '차분하고 객관적.',
+    '트러블 났을 때 대처법': '차분하고 객관적.',
+    '이 사람과 같이 성장하려면': '큰 그림. 희망적.',
+    '한 줄 요약': '가장 시적. 여운 남게. 감동적.'
+  },
+  friend: {
+    '이 사람의 성격': '시적이고 감성적. 물상 비유 활용.',
+    '이 사람의 우정 스타일': '따뜻한 관찰. 담백하게.',
+    '이 사람이 친구에게 바라는 것': '공감하는 톤. 따뜻하게.',
+    '이 사람이 친구에게 서운해하는 것': '걱정해주는 톤. 직설적.',
+    '상대 눈에 비친 나': '호기심 자극하는 톤.',
+    '잘 맞는 부분': '자신감 불어넣기. 확신 톤.',
+    '서로 맞춰가야 할 부분': '솔직하고 직설적. 따뜻한 조언.',
+    '이 사람의 감정 표현 방식': '감성적 관찰. 따뜻하게.',
+    '이 사람과 같이 하면 잘 되는 것': '따뜻한 코칭.',
+    '멀어졌을 때 회복법': '따뜻한 코칭.',
+    '이 사람과 같이 성장하려면': '큰 그림. 희망적.',
+    '한 줄 요약': '가장 시적. 여운 남게. 감동적.'
+  }
+};
   window.GH_SUB_TONE = GH_SUB_TONE;
 
-  // ── getGHSystemPrompt (lib/gunghap-prompt.js와 동기화) ──
+  // ── getGHSystemPrompt (lib/gunghap-prompt.js와 동일 로직) ──
   window.getGHSystemPrompt = function(rel) {
     var base = GUNGHAP_SYSTEM_V2;
     var cfg = GH_REL_CONFIG[rel];
     if (!cfg) return base;
-
     var cat = (typeof GH_CATEGORIES !== 'undefined') ? GH_CATEGORIES[rel] : null;
     var label = cat ? cat.label : (cfg.title || rel);
-
     if (cfg.subs && cfg.subs.length > 0) {
       var catNames = (cat && cat.categories) || ['전체'];
-      // GH_CAT_RANGES는 lib에만 있고 public에는 없음 — fallback: 전체를 한 카테고리로
       var ranges = (typeof GH_CAT_RANGES !== 'undefined' && GH_CAT_RANGES[rel]) ? GH_CAT_RANGES[rel] : [cfg.subs.length];
-      var section = '\n## 관계: ' + label
-        + '\n부제: ' + (cfg.subtitle || '')
-        + '\n\n## categories (' + catNames.length + '개 고정, ' + cfg.subs.length + '개 subs)\n\n';
+      var section = '\n## 관계: ' + label + '\n부제: ' + (cfg.subtitle || '') + '\n\n## categories (' + catNames.length + '개 고정, ' + cfg.subs.length + '개 subs)\n\n';
       var idx = 0;
       for (var c = 0; c < catNames.length; c++) {
         var subNames = [];
         for (var s = 0; s < (ranges[c] || 0); s++) {
-          if (idx < cfg.subs.length) {
-            subNames.push(cfg.subs[idx].h);
-            idx++;
-          }
+          if (idx < cfg.subs.length) { subNames.push(cfg.subs[idx].h); idx++; }
         }
         section += (c + 1) + '. ' + catNames[c] + ': ' + subNames.join(' / ') + '\n';
       }
-      // ── 소주제별 톤 가이드 + 앵커 ──
       var toneMap = GH_SUB_TONE[rel] || {};
       section += '\n## 소주제별 톤 가이드\n';
       for (var ti = 0; ti < cfg.subs.length; ti++) {
