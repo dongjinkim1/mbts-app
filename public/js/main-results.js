@@ -328,10 +328,10 @@ function finalizeGhStream(aiResult) {
   var footer = document.getElementById('ghStreamFooter');
   if (footer) {
     var h = '';
-    if (aiResult && aiResult.oneLine) {
+    if (aiResult && (aiResult.quote || aiResult.oneLine)) {
       h += '<div style="margin:20px 20px 0;padding:20px;text-align:center;background:linear-gradient(135deg,rgba(139,108,193,0.06),rgba(212,115,139,0.06));border-radius:16px">';
       h += '<div style="font-size:10px;color:var(--text-muted);letter-spacing:2px;margin-bottom:8px">YOUR RELATIONSHIP IN ONE LINE</div>';
-      h += '<div style="font-size:16px;font-weight:700;color:var(--text-primary);line-height:1.5">' + aiResult.oneLine + '</div>';
+      h += '<div style="font-size:16px;font-weight:700;color:var(--text-primary);line-height:1.5">' + (aiResult.quote || aiResult.oneLine) + '</div>';
       h += '</div>';
     }
     h += '<div style="padding:24px 20px"><button onclick="shareResult()" style="width:100%;padding:14px;font-size:14px;font-weight:700;color:#191919;background:#FEE500;border:none;border-radius:14px;margin-bottom:10px">\uD83D\uDCAC 공유하기</button>';
@@ -364,7 +364,15 @@ function fillGhResultProgressive(ghR,aiR,sajuA,sajuB,mbtiA,mbtiB,relType){
   h+='<div id="gh-prog-sub-container"></div>';
   h+='<div id="gh-prog-skeleton" class="r-sub prog-sub-card" style="text-align:center;padding:20px;color:var(--text-3);font-size:13px"><span class="load-dots"><span></span><span></span><span></span></span> 풀이를 펼치는 중</div>';
 
-  // ⑤ CTA (숨김 — 완료 후 표시)
+  // ⑤ 감성 글귀 남색 푸터 (aiR.quote가 있을 때만, 개인분석 .r-oneline과 동일 스타일)
+  if(aiR&&aiR.quote){
+    h+='<div class="gh-oneline">';
+    h+='<div class="r-oneline-label">YOUR RELATIONSHIP IN ONE LINE</div>';
+    h+='<div class="r-oneline-text">'+String(aiR.quote).replace(/\\n/g,'<br>').replace(/\n/g,'<br>')+'</div>';
+    h+='</div>';
+  }
+
+  // ⑥ CTA (숨김 — 완료 후 표시)
   h+='<div id="gh-prog-cta" style="display:none;padding:20px">';
   h+='<button onclick="go(\'pgDash\')" class="r-cta-btn" style="background:rgba(232,69,60,.1);color:#E8453C">💕 새 궁합 보기</button>';
   h+='<button onclick="shareResult()" class="r-cta-btn" style="background:#FEE500;color:#191919">💬 카카오 공유</button>';
