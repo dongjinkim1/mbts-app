@@ -233,6 +233,7 @@ export async function POST(request) {
 
 async function processJob(jobId, prompts, inputParams, ai) {
   const supabase = getServiceSupabase()
+  const { val } = await getModules()
 
   try {
     // JSON enforcement (same as job-create)
@@ -339,6 +340,15 @@ async function processJob(jobId, prompts, inputParams, ai) {
       .join('')
 
     console.log('[analyze-v2] Claude done:', fullText.length, 'chars, subs detected:', detectedSubs.length)
+
+    // ── postValidateAI: 대운 나이 / 오행 / 세운 간지 교정 ──
+    try {
+      var _parsedForVal = JSON.parse(fullText)
+      if (_parsedForVal && _parsedForVal.categories) {
+        val.postValidateAI(_parsedForVal, prompts.dw, prompts.saju, prompts.gg)
+        fullText = JSON.stringify(_parsedForVal)
+      }
+    } catch(e) { /* 파싱 실패 시 검증 생략, 원문 유지 */ }
 
     const isComplete = ai.isValidJSON(fullText)
     await supabase.from('analysis_jobs').upsert({
