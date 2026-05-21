@@ -401,5 +401,28 @@ async function processJob(jobId, prompts, inputParams, ai, gp) {
       updated_at: new Date().toISOString()
     })
     if (failErr) console.error('[gunghap-v2] fail upsert error:', failErr.message)
+
+    // ── fallback 결과 생성 (AI 실패해도 기본 풀이 제공) ──
+    try {
+      const _fbMod = await import('@/lib/fallback-gunghap.js')
+      const _fb = _fbMod.default || _fbMod
+      const fbResult = _fb.mkGunghapFB(
+        prompts.sajuA, prompts.sajuB,
+        prompts.mtA, prompts.mtB,
+        prompts.ggA, prompts.ggB,
+        inputParams.relType
+      )
+      if (fbResult) {
+        await supabase.from('analysis_jobs').upsert({
+          id: jobId,
+          type: 'gunghap',
+          status: 'done',
+          params: inputParams,
+          result: { text: JSON.stringify(fbResult), length: 0, fallback: true },
+          updated_at: new Date().toISOString()
+        })
+        console.log('[gunghap-v2] fallback 결과 저장 완료:', jobId)
+      }
+    } catch(fbErr) { console.warn('[gunghap] fallback 생성 실패:', fbErr.message) }
   }
 }
