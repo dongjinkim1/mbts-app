@@ -268,16 +268,32 @@ async function processJob(jobId, prompts, inputParams, ai, gp) {
             const nmPos = fullText.indexOf(nextMarker) >= 0 ? fullText.indexOf(nextMarker) : fullText.indexOf(nextMarkerWs)
             if (pmPos >= 0 && nmPos > pmPos) {
               const prevStart = fullText.lastIndexOf('{', pmPos)
+              // FIX: 공백/줄바꿈 무관 backward 검색 — { 뒤에 "h"가 오는 위치 찾기
               let nextStart = -1
-              const hPos1 = fullText.lastIndexOf('{"h"', nmPos)
-              const hPos2 = fullText.lastIndexOf('{"h": ', nmPos)
-              const hPos3 = fullText.lastIndexOf('{"h":"', nmPos)
-              nextStart = Math.max(hPos1, hPos2, hPos3)
+              let _sp = nmPos
+              while (_sp >= 0) {
+                const _bp = fullText.lastIndexOf('{', _sp)
+                if (_bp < 0) break
+                const _after = fullText.substring(_bp + 1, _bp + 30).trimStart()
+                if (_after.startsWith('"h"')) { nextStart = _bp; break }
+                _sp = _bp - 1
+              }
               if (nextStart < 0) nextStart = fullText.lastIndexOf('{', nmPos)
               if (prevStart >= 0 && nextStart > prevStart) {
                 let subText = fullText.substring(prevStart, nextStart).replace(/,\s*$/, '')
-                const boundaryIdx = subText.search(/\]\s*\}/)
-                if (boundaryIdx >= 0) subText = subText.substring(0, boundaryIdx).replace(/[,\s]+$/, '')
+                // FIX: brace depth counting으로 sub 객체 끝 정확히 찾기
+                // 본문 안의 {}, []} 등에 오탐하지 않음
+                let _d = 0, _inS = false, _esc = false, _end = -1
+                for (let _i = 0; _i < subText.length; _i++) {
+                  const c = subText[_i]
+                  if (_esc) { _esc = false; continue }
+                  if (c === '\\') { _esc = true; continue }
+                  if (c === '"') { _inS = !_inS; continue }
+                  if (_inS) continue
+                  if (c === '{') _d++
+                  else if (c === '}') { _d--; if (_d === 0) { _end = _i + 1; break } }
+                }
+                if (_end > 0) subText = subText.substring(0, _end)
                 try {
                   const subObj = JSON.parse(subText)
                   detectedSubs.push(subObj)
