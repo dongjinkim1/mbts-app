@@ -220,6 +220,7 @@ export async function POST(request) {
 
 async function processJob(jobId, prompts, inputParams, ai, gp) {
   const supabase = getServiceSupabase()
+  const { val } = await getModules()
 
   try {
     // 관계별 소주제명 동적 추출 (progressive rendering용)
@@ -323,6 +324,15 @@ async function processJob(jobId, prompts, inputParams, ai, gp) {
         }
       }
     } catch(e) { /* 전체 JSON 파싱 실패 시 기존 partial_subs 유지 */ }
+
+    // ── postValidateGunghapAI: 대운 나이 / 오행 / 세운 간지 교정 ──
+    try {
+      var _parsedForVal = JSON.parse(fullText)
+      if (_parsedForVal && _parsedForVal.categories) {
+        val.postValidateGunghapAI(_parsedForVal, prompts.dwA, prompts.dwB, prompts.sajuA, prompts.sajuB)
+        fullText = JSON.stringify(_parsedForVal)
+      }
+    } catch(e) { /* 파싱 실패 시 검증 생략, 원문 유지 */ }
 
     const isComplete = ai.isValidJSON(fullText)
     await supabase.from('analysis_jobs').upsert({
