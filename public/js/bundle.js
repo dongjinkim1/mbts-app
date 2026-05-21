@@ -1,4 +1,4 @@
-// MBTS Bundle — 20260521_1524
+// MBTS Bundle — 20260521_1550
 
 // ═══ main-nav.js (2404L) ═══
 // main-nav.js — navigation, state, profiles, dashboard, birth input, MBTI, gunghap selection
@@ -2406,7 +2406,7 @@ function mbtiGoNext(){if(mbtiCh[mbtiCur]===null||mbtiIt[mbtiCur]===null)return;i
 function mbtiGoBack(){if(mbtiCur>0){mbtiCur--;renderMBTI();}else go('pgBirth');}
 
 
-// ═══ main-gunghap.js (914L) ═══
+// ═══ main-gunghap.js (972L) ═══
 // main-gunghap.js — gunghap load animation, analysis execution, result filling
 function toggleExtraGh(){
   var items=document.querySelectorAll('.extra-gh');
@@ -2810,12 +2810,32 @@ async function _runGunghapAnalysis(){
         if (Date.now() > _ghHardDeadline) {
           clearInterval(_ghTimer);
           localStorage.removeItem('mbts_active_job');
+          // partial fallback: 5개 이상 sub가 렌더링됐으면 현재 상태로 finalize
+          if (_ghRenderedSubCount >= 5) {
+            var _skelHD = document.getElementById('gh-prog-skeleton');
+            if (_skelHD) _skelHD.style.display = 'none';
+            var _ctaHD = document.getElementById('gh-prog-cta');
+            if (_ctaHD) _ctaHD.style.display = 'block';
+            if (typeof showToast === 'function') showToast('분석이 오래 걸려 중단됐어요 🔄');
+            resolve('');
+            return;
+          }
           reject(new Error('분석 시간 초과 (15분 한도)'));
           return;
         }
         if (elapsed > 300000) {
           clearInterval(_ghTimer);
           localStorage.removeItem('mbts_active_job');
+          // partial fallback: 5개 이상 sub가 렌더링됐으면 현재 상태로 finalize
+          if (_ghRenderedSubCount >= 5) {
+            var _skelIT = document.getElementById('gh-prog-skeleton');
+            if (_skelIT) _skelIT.style.display = 'none';
+            var _ctaIT = document.getElementById('gh-prog-cta');
+            if (_ctaIT) _ctaIT.style.display = 'block';
+            if (typeof showToast === 'function') showToast('일부 항목이 아직 준비 중이에요 🔄');
+            resolve('');
+            return;
+          }
           reject(new Error('분석 시간 초과'));
           return;
         }
@@ -2921,13 +2941,51 @@ async function _runGunghapAnalysis(){
             // 서버 아직 시작 안 함 — 대기 (타임아웃으로 자연 종료)
             console.log('[MBTS] gunghap job pending, 대기 중');
           } else if (data.status === 'partial') {
-            clearInterval(_ghTimer);
-            localStorage.removeItem('mbts_active_job');
-            // partial fallback: try to use incomplete text if any
+            // FIX: partial이어도 result.text 파싱 시도 — 파싱한 sub 수 >= 5 이면 done으로 처리
+            var _canRecoverGh = false;
             if (data.result && data.result.text) {
-              resolve(data.result.text);
-            } else {
-              reject(new Error('분석이 불완전하게 끝났습니다'));
+              try {
+                var _pTextGh = data.result.text.replace(/```json|```/g, '').trim();
+                var _pParsedGh = null;
+                try { _pParsedGh = JSON.parse(_pTextGh); } catch(e) {
+                  var _fbGh = _pTextGh.indexOf('{'), _lbGh = _pTextGh.lastIndexOf('}');
+                  if (_fbGh >= 0 && _lbGh > _fbGh) {
+                    try { _pParsedGh = JSON.parse(_pTextGh.substring(_fbGh, _lbGh + 1)); } catch(e2) {}
+                  }
+                }
+                if (!_pParsedGh) {
+                  try {
+                    var _rawGh = _pTextGh.substring(_pTextGh.indexOf('{'));
+                    var _oBGh=(_rawGh.match(/{/g)||[]).length, _cBGh=(_rawGh.match(/}/g)||[]).length;
+                    var _oKGh=(_rawGh.match(/\[/g)||[]).length, _cKGh=(_rawGh.match(/\]/g)||[]).length;
+                    while(_cKGh<_oKGh){_rawGh+=']';_cKGh++;}
+                    while(_cBGh<_oBGh){_rawGh+='}';_cBGh++;}
+                    _rawGh=_rawGh.replace(/,\s*([}\]])/g,'$1');
+                    _pParsedGh = JSON.parse(_rawGh);
+                  } catch(e3) {}
+                }
+                if (_pParsedGh && _pParsedGh.categories && _pParsedGh.categories.length > 0) {
+                  var _totalSubsGh = 0;
+                  _pParsedGh.categories.forEach(function(c){ _totalSubsGh += (c.subs||[]).length; });
+                  if (_totalSubsGh >= 5) {
+                    console.log('[MBTS] gunghap partial 복구 성공:', _totalSubsGh, 'subs');
+                    _canRecoverGh = true;
+                    clearInterval(_ghTimer);
+                    localStorage.removeItem('mbts_active_job');
+                    resolve(data.result.text);
+                  }
+                }
+              } catch(e) { console.warn('[MBTS] gunghap partial 복구 시도 실패:', e); }
+            }
+            if (!_canRecoverGh) {
+              clearInterval(_ghTimer);
+              localStorage.removeItem('mbts_active_job');
+              // partial fallback: try to use incomplete text if any
+              if (data.result && data.result.text) {
+                resolve(data.result.text);
+              } else {
+                reject(new Error('분석이 불완전하게 끝났습니다'));
+              }
             }
           }
         } catch(e) {
